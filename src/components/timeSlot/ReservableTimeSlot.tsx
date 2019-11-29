@@ -53,8 +53,8 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
       .catch(error => {
         ToastUtils.error(error.response.data.message)
       })
+      .finally(() => this.props.reserveCallback())
   }
-
 
   render() {
     return <div>
@@ -73,6 +73,7 @@ interface Props {
   timeSlot: MeetingPoll
   selected: boolean
   meetingId: string
+  reserveCallback: () => void
 }
 
 interface State {

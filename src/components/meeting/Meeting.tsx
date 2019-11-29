@@ -11,6 +11,10 @@ export default class MeetingComponent extends Component<Props, State> {
   }
 
   componentDidMount(): void {
+    this.getMeeting();
+  }
+
+  getMeeting(){
     Api.getMeeting(this.props.id).then(response => {
       this.setState({...this.state, meeting: response.data});
     })
@@ -23,7 +27,7 @@ export default class MeetingComponent extends Component<Props, State> {
   render() {
     let meeting = this.state.meeting;
     if (!meeting)
-      return <h1>Loading...</h1>;
+      return <div className="spinner-border"/>;
     return <div>
       <h1>
         {meeting.title}
@@ -37,6 +41,7 @@ export default class MeetingComponent extends Component<Props, State> {
                 selected={this.state.selectedTimeSlot === index}
                 timeSlot={slot}
                 meetingId={this.props.id}
+                reserveCallback={()=>this.getMeeting()}
               />
               {this.state.selectedTimeSlot !== index &&
               <button onClick={() => this.selectTimeSlot(index)}>انتخاب</button>}
