@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Meeting from './models/Meeting';
+import Meeting, {TimeRange} from './models/Meeting';
 import AvailableRoomsResponse from './models/AvailableRoomsResponse';
 
 class ApiClass {
@@ -8,7 +8,7 @@ class ApiClass {
   });
 
   getMeeting(id: string) {
-    return this.axiosInstance.get<Meeting>('/meeting/5de101629cde7661f67be93b');
+    return this.axiosInstance.get<Meeting>(`/meeting/${id}`);
   }
 
   getAvailableRooms(start: number, end: number) {
@@ -17,6 +17,14 @@ class ApiClass {
         'start': start,
         'end': end
       }
+    })
+  }
+
+  reserveRoom(meetingId: string, selectedRoom: number, selectedTime: TimeRange, pageEntryTime: Date) {
+    return this.axiosInstance.post(`/meeting/${meetingId}/reserve`, {
+      selectedRoom,
+      selectedTime,
+      pageEntryTime
     })
   }
 }

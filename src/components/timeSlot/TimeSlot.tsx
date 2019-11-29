@@ -33,6 +33,27 @@ export default class TimeSlotComponent extends Component<Props, State> {
     this.setState({...this.state, selectedRoom: parseInt(event.target.value)})
   }
 
+  showReserveOptions() {
+    return <div>
+      <select onChange={(event) => this.selectRoom(event)} name="rooms">
+        {
+          this.state.availableRooms.map((item: number) =>
+            <option key={item} value={item}>{item}</option>
+          )
+        }
+      </select>
+      <button color="green" onClick={() => this.reserveRoom()}>رزرو</button>
+    </div>
+  }
+
+  reserveRoom() {
+    Api
+      .reserveRoom(this.props.meetingId, this.state.selectedRoom!!, this.props.timeSlot.time, new Date())
+      .then(response => ToastUtils.success("Reserved Successfully"))
+      .catch(error => {
+        ToastUtils.error(error.response.data.message)})
+  }
+
 
   render() {
     return <div>
@@ -46,15 +67,8 @@ export default class TimeSlotComponent extends Component<Props, State> {
 
         <p>{this.props.timeSlot.agreeingUsers.length} موافق</p>
         <p>{this.props.timeSlot.disagreeingUsers.length} مخالف</p>
-        {
-          this.props.selected && <select onChange={(event) => this.selectRoom(event)} name="rooms">
-            {
-              this.state.availableRooms.map((item: number) =>
-                <option key={item} value={item}>{item}</option>
-              )
-            }
-          </select>
-        }
+        {this.props.selected && this.showReserveOptions()}
+
       </div>
     </div>
   }
@@ -63,6 +77,7 @@ export default class TimeSlotComponent extends Component<Props, State> {
 interface Props {
   timeSlot: MeetingPoll
   selected: boolean
+  meetingId: string
 }
 
 interface State {

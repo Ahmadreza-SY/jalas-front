@@ -31,7 +31,9 @@ export default class MeetingComponent extends Component<Props, State> {
         {this.state.meeting.slots.map((item: MeetingPoll, index: number) => (
           <li key={index}>
             <TimeSlotComponent
-              selected={this.state.selectedTimeSlot === index} timeSlot={item}/>
+              selected={this.state.selectedTimeSlot === index} timeSlot={item}
+              meetingId={this.props.id}
+            />
             {this.state.selectedTimeSlot !== index &&
             <button onClick={() => this.selectTimeSlot(index)}>انتخاب</button>}
             <hr/>
