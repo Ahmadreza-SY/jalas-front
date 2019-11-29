@@ -11,10 +11,10 @@ export default class Meeting {
 }
 
 export enum MeetingStatus {
-  ELECTING,
-  PENDING,
-  RESERVED,
-  CANCELED
+  ELECTING = "ELECTING",
+  PENDING = "PENDING",
+  RESERVED = "RESERVED",
+  CANCELED = "CANCELED"
 }
 
 

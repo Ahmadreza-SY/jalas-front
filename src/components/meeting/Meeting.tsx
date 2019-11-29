@@ -31,10 +31,11 @@ export default class MeetingComponent extends Component<Props, State> {
       <h3>{meeting.status} وضعیت فعلی</h3>
       {meeting.status === MeetingStatus.ELECTING ? (
         <ul>
-          {meeting.slots.map((item: MeetingPoll, index: number) => (
+          {meeting.slots.map((slot: MeetingPoll, index: number) => (
             <li key={index}>
               <ReservableTimeSlotComponent
-                selected={this.state.selectedTimeSlot === index} timeSlot={item}
+                selected={this.state.selectedTimeSlot === index}
+                timeSlot={slot}
                 meetingId={this.props.id}
               />
               {this.state.selectedTimeSlot !== index &&
