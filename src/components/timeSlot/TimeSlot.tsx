@@ -2,17 +2,20 @@ import React, {ChangeEvent, Component} from 'react';
 import {MeetingPoll} from '../../api/models/Meeting';
 import Api from '../../api/Api';
 import TimeUtils from "../../utills/TimeUtils";
+import ToastUtils from '../../utils/ToastUtils';
 
 export default class TimeSlotComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {availableRooms: [], selectedRoom: undefined}
-
   }
 
   componentWillReceiveProps(nextProps: Readonly<Props>): void {
     if (nextProps.selected)
-      this.getAvailableRooms()
+      this.getAvailableRooms();
+    else {
+      this.setState({availableRooms: [], selectedRoom: undefined})
+    }
   }
 
   getAvailableRooms() {
@@ -21,11 +24,34 @@ export default class TimeSlotComponent extends Component<Props, State> {
       .then(response => {
         this.setState({...this.state, availableRooms: response.data.availableRooms})
       })
+      .catch(error => {
+        ToastUtils.error(error.message)
+      })
   }
 
   selectRoom(event: ChangeEvent<HTMLSelectElement>) {
-    console.log("ROOMID", event.target.value);
     this.setState({...this.state, selectedRoom: parseInt(event.target.value)})
+  }
+
+  showReserveOptions() {
+    return <div>
+      <select onChange={(event) => this.selectRoom(event)} name="rooms">
+        {
+          this.state.availableRooms.map((item: number) =>
+            <option key={item} value={item}>{item}</option>
+          )
+        }
+      </select>
+      <button color="green" onClick={() => this.reserveRoom()}>رزرو</button>
+    </div>
+  }
+
+  reserveRoom() {
+    Api
+      .reserveRoom(this.props.meetingId, this.state.selectedRoom!!, this.props.timeSlot.time, new Date())
+      .then(response => ToastUtils.success("Reserved Successfully"))
+      .catch(error => {
+        ToastUtils.error(error.response.data.message)})
   }
 
 
@@ -43,15 +69,8 @@ export default class TimeSlotComponent extends Component<Props, State> {
         <p>{TimeUtils.getDuration(this.props.timeSlot.time.start, this.props.timeSlot.time.end)} مدت</p>
         <p>{this.props.timeSlot.agreeingUsers.length} موافق</p>
         <p>{this.props.timeSlot.disagreeingUsers.length} مخالف</p>
-        {
-          this.props.selected && <select onChange={(event) => this.selectRoom(event)} name="rooms">
-            {
-              this.state.availableRooms.map((item: number) =>
-                <option key={item} value={item}>{item}</option>
-              )
-            }
-          </select>
-        }
+        {this.props.selected && this.showReserveOptions()}
+
       </div>
     </div>
   }
@@ -60,6 +79,7 @@ export default class TimeSlotComponent extends Component<Props, State> {
 interface Props {
   timeSlot: MeetingPoll
   selected: boolean
+  meetingId: string
 }
 
 interface State {
