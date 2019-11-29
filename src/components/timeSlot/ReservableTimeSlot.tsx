@@ -49,11 +49,18 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
   reserveRoom() {
     Api
       .reserveRoom(this.props.meetingId, this.state.selectedRoom!!, this.props.timeSlot.time, new Date())
-      .then(response => ToastUtils.success("Reserved Successfully"))
-      .catch(error => {
-        ToastUtils.error(error.response.data.message)
+      .then(response => {
+        ToastUtils.success("Reserved Successfully");
+        this.props.reserveCallback()
       })
-      .finally(() => this.props.reserveCallback())
+      .catch(error => {
+        ToastUtils.error(error.response.data.message);
+        if (error.status === 400) {
+          this.getAvailableRooms()
+        } else {
+          this.props.reserveCallback()
+        }
+      })
   }
 
   render() {
