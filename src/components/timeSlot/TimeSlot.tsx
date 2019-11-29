@@ -1,17 +1,21 @@
 import React, {ChangeEvent, Component} from 'react';
 import {MeetingPoll} from '../../api/models/Meeting';
 import Api from '../../api/Api';
+import ToastUtils from '../../utils/ToastUtils';
 
 export default class TimeSlotComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {availableRooms: [], selectedRoom: undefined}
-
   }
+
 
   componentWillReceiveProps(nextProps: Readonly<Props>): void {
     if (nextProps.selected)
-      this.getAvailableRooms()
+      this.getAvailableRooms();
+    else {
+      this.setState({availableRooms: [], selectedRoom: undefined})
+    }
   }
 
   getAvailableRooms() {
@@ -20,10 +24,12 @@ export default class TimeSlotComponent extends Component<Props, State> {
       .then(response => {
         this.setState({...this.state, availableRooms: response.data.availableRooms})
       })
+      .catch(error => {
+        ToastUtils.error(error.message)
+      })
   }
 
   selectRoom(event: ChangeEvent<HTMLSelectElement>) {
-    console.log("ROOMID", event.target.value);
     this.setState({...this.state, selectedRoom: parseInt(event.target.value)})
   }
 
@@ -31,7 +37,6 @@ export default class TimeSlotComponent extends Component<Props, State> {
   render() {
     return <div>
       <div>
-        {this.props.selected && <h1>SELECTED</h1>}
         <p>
           {this.props.timeSlot.time.start}
         </p>
