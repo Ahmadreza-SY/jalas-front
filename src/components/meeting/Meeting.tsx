@@ -7,14 +7,14 @@ import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 export default class MeetingComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {meeting: undefined, selectedTimeSlot: undefined}
+    this.state = {meeting: undefined, selectedTimeSlot: undefined, pageEntryTime: new Date()}
   }
 
   componentDidMount(): void {
     this.getMeeting();
   }
 
-  getMeeting(){
+  getMeeting() {
     Api.getMeeting(this.props.id).then(response => {
       this.setState({...this.state, meeting: response.data});
     })
@@ -41,7 +41,8 @@ export default class MeetingComponent extends Component<Props, State> {
                 selected={this.state.selectedTimeSlot === index}
                 timeSlot={slot}
                 meetingId={this.props.id}
-                reserveCallback={()=>this.getMeeting()}
+                reserveCallback={() => this.getMeeting()}
+                pageEntryTime={this.state.pageEntryTime}
               />
               {this.state.selectedTimeSlot !== index &&
               <button onClick={() => this.selectTimeSlot(index)}>انتخاب</button>}
@@ -59,6 +60,7 @@ export default class MeetingComponent extends Component<Props, State> {
 interface State {
   meeting: Meeting | undefined
   selectedTimeSlot: number | undefined
+  pageEntryTime: Date
 }
 
 interface Props {

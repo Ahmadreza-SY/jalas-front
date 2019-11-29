@@ -25,7 +25,7 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
         this.setState({...this.state, availableRooms: response.data.availableRooms})
       })
       .catch(error => {
-        ToastUtils.error(error.message)
+        ToastUtils.error(error.response.data.message)
       })
   }
 
@@ -48,7 +48,7 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
 
   reserveRoom() {
     Api
-      .reserveRoom(this.props.meetingId, this.state.selectedRoom!!, this.props.timeSlot.time, new Date())
+      .reserveRoom(this.props.meetingId, this.state.selectedRoom!!, this.props.timeSlot.time, this.props.pageEntryTime)
       .then(response => {
         ToastUtils.success("Reserved Successfully");
         this.props.reserveCallback()
@@ -69,7 +69,7 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
         <TimeSlotGeneralInfo time={this.props.timeSlot.time}/>
         <p>{this.props.timeSlot.agreeingUsers.length} موافق</p>
         <p>{this.props.timeSlot.disagreeingUsers.length} مخالف</p>
-        {this.props.selected && this.showReserveOptions()}
+        {this.props.selected && this.state.availableRooms.length > 0 && this.showReserveOptions()}
 
       </div>
     </div>
@@ -81,6 +81,7 @@ interface Props {
   selected: boolean
   meetingId: string
   reserveCallback: () => void
+  pageEntryTime: Date
 }
 
 interface State {
