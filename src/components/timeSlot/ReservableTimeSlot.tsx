@@ -1,10 +1,10 @@
 import React, {ChangeEvent, Component} from 'react';
 import {MeetingPoll} from '../../api/models/Meeting';
 import Api from '../../api/Api';
-import TimeUtils from "../../utills/TimeUtils";
 import ToastUtils from '../../utils/ToastUtils';
+import TimeSlotGeneralInfo from './TimeSlotGeneralInfo';
 
-export default class TimeSlotComponent extends Component<Props, State> {
+export default class ReservableTimeSlotComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {availableRooms: [], selectedRoom: undefined}
@@ -51,22 +51,15 @@ export default class TimeSlotComponent extends Component<Props, State> {
       .reserveRoom(this.props.meetingId, this.state.selectedRoom!!, this.props.timeSlot.time, new Date())
       .then(response => ToastUtils.success("Reserved Successfully"))
       .catch(error => {
-        ToastUtils.error(error.response.data.message)})
+        ToastUtils.error(error.response.data.message)
+      })
   }
 
 
   render() {
     return <div>
       <div>
-        {this.props.selected && <h1>SELECTED</h1>}
-        <p>{TimeUtils.getDateFormat(this.props.timeSlot.time.start)} روز</p>
-        <p>
-          ساعت&nbsp;
-          {TimeUtils.getClockFormat(this.props.timeSlot.time.start)}
-          -
-          {TimeUtils.getClockFormat(this.props.timeSlot.time.end)}
-        </p>
-        <p>{TimeUtils.getDuration(this.props.timeSlot.time.start, this.props.timeSlot.time.end)} مدت</p>
+        <TimeSlotGeneralInfo time={this.props.timeSlot.time}/>
         <p>{this.props.timeSlot.agreeingUsers.length} موافق</p>
         <p>{this.props.timeSlot.disagreeingUsers.length} مخالف</p>
         {this.props.selected && this.showReserveOptions()}

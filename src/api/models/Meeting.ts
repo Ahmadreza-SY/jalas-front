@@ -10,7 +10,7 @@ export default class Meeting {
   }
 }
 
-enum MeetingStatus {
+export enum MeetingStatus {
   ELECTING,
   PENDING,
   RESERVED,

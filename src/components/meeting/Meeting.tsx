@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import Api from '../../api/Api';
-import Meeting, {MeetingPoll} from '../../api/models/Meeting';
-import TimeSlotComponent from '../timeSlot/TimeSlot';
+import Meeting, {MeetingPoll, MeetingStatus} from '../../api/models/Meeting';
+import ReservableTimeSlotComponent from '../timeSlot/ReservableTimeSlot';
+import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 
 export default class MeetingComponent extends Component<Props, State> {
   constructor(props: Props) {
@@ -11,7 +12,6 @@ export default class MeetingComponent extends Component<Props, State> {
 
   componentDidMount(): void {
     Api.getMeeting(this.props.id).then(response => {
-      console.log(response);
       this.setState({...this.state, meeting: response.data});
     })
   }
@@ -21,27 +21,32 @@ export default class MeetingComponent extends Component<Props, State> {
   }
 
   render() {
-    if (!this.state.meeting)
+    let meeting = this.state.meeting;
+    if (!meeting)
       return <h1>Loading...</h1>;
     return <div>
       <h1>
-        {this.state.meeting.title}
+        {meeting.title}
       </h1>
-      <ul>
-        {this.state.meeting.slots.map((item: MeetingPoll, index: number) => (
-          <li key={index}>
-            <TimeSlotComponent
-              selected={this.state.selectedTimeSlot === index} timeSlot={item}
-              meetingId={this.props.id}
-            />
-            {this.state.selectedTimeSlot !== index &&
-            <button onClick={() => this.selectTimeSlot(index)}>انتخاب</button>}
-            <hr/>
-          </li>
-        ))}
-      </ul>
+      <h3>{meeting.status} وضعیت فعلی</h3>
+      {meeting.status === MeetingStatus.ELECTING ? (
+        <ul>
+          {meeting.slots.map((item: MeetingPoll, index: number) => (
+            <li key={index}>
+              <ReservableTimeSlotComponent
+                selected={this.state.selectedTimeSlot === index} timeSlot={item}
+                meetingId={this.props.id}
+              />
+              {this.state.selectedTimeSlot !== index &&
+              <button onClick={() => this.selectTimeSlot(index)}>انتخاب</button>}
+              <hr/>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
+      )}
     </div>
-
   }
 }
 
