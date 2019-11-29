@@ -1,6 +1,7 @@
 import React, {ChangeEvent, Component} from 'react';
 import {MeetingPoll} from '../../api/models/Meeting';
 import Api from '../../api/Api';
+import TimeUtils from "../../utills/TimeUtils";
 
 export default class TimeSlotComponent extends Component<Props, State> {
   constructor(props: Props) {
@@ -32,13 +33,14 @@ export default class TimeSlotComponent extends Component<Props, State> {
     return <div>
       <div>
         {this.props.selected && <h1>SELECTED</h1>}
+        <p>{TimeUtils.getDateFormat(this.props.timeSlot.time.start)} روز</p>
         <p>
-          {this.props.timeSlot.time.start}
+          ساعت&nbsp;
+          {TimeUtils.getClockFormat(this.props.timeSlot.time.start)}
+          -
+          {TimeUtils.getClockFormat(this.props.timeSlot.time.end)}
         </p>
-        <p>
-          {this.props.timeSlot.time.end}
-        </p>
-
+        <p>{TimeUtils.getDuration(this.props.timeSlot.time.start, this.props.timeSlot.time.end)} مدت</p>
         <p>{this.props.timeSlot.agreeingUsers.length} موافق</p>
         <p>{this.props.timeSlot.disagreeingUsers.length} مخالف</p>
         {
