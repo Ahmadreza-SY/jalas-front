@@ -7,7 +7,7 @@ import TimeSlotGeneralInfo from './TimeSlotGeneralInfo';
 export default class ReservableTimeSlotComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {availableRooms: [], selectedRoom: undefined}
+    this.state = {availableRooms: [], selectedRoom: undefined, fetchError: false}
   }
 
   componentWillReceiveProps(nextProps: Readonly<Props>): void {
@@ -25,7 +25,9 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
         this.setState({...this.state, availableRooms: response.data.availableRooms})
       })
       .catch(error => {
-        ToastUtils.error(error.response.data.message)
+        ToastUtils.error("Error in getting rooms. Please try again");
+        this.setState({...this.state, fetchError: true});
+        this.props.getRoomsFailCallback()
       })
   }
 
@@ -69,8 +71,7 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
         <TimeSlotGeneralInfo time={this.props.timeSlot.time}/>
         <p>{this.props.timeSlot.agreeingUsers.length} موافق</p>
         <p>{this.props.timeSlot.disagreeingUsers.length} مخالف</p>
-        {this.props.selected && this.state.availableRooms.length > 0 && this.showReserveOptions()}
-
+        {(this.props.selected && this.state.availableRooms.length > 0) && this.showReserveOptions()}
       </div>
     </div>
   }
@@ -82,9 +83,11 @@ interface Props {
   meetingId: string
   reserveCallback: () => void
   pageEntryTime: Date
+  getRoomsFailCallback: () => void
 }
 
 interface State {
   availableRooms: number[]
   selectedRoom: number | undefined
+  fetchError: boolean
 }

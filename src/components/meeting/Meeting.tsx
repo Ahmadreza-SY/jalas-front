@@ -24,6 +24,10 @@ export default class MeetingComponent extends Component<Props, State> {
     this.setState({...this.state, selectedTimeSlot: index})
   }
 
+  clearSelectedTimeSlot() {
+    this.setState({...this.state, selectedTimeSlot: undefined})
+  }
+
   render() {
     let meeting = this.state.meeting;
     if (!meeting)
@@ -42,6 +46,7 @@ export default class MeetingComponent extends Component<Props, State> {
                 timeSlot={slot}
                 meetingId={this.props.id}
                 reserveCallback={() => this.getMeeting()}
+                getRoomsFailCallback={() => this.clearSelectedTimeSlot()}
                 pageEntryTime={this.state.pageEntryTime}
               />
               {this.state.selectedTimeSlot !== index &&
