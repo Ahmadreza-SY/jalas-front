@@ -27,6 +27,10 @@ class ApiClass {
       pageEntryTime
     })
   }
+
+  cancelReservation(meetingId: string) {
+    return this.axiosInstance.delete(`/meeting/${meetingId}/reserve`)
+  }
 }
 
 const Api = new ApiClass();

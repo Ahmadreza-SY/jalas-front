@@ -28,6 +28,16 @@ export default class MeetingComponent extends Component<Props, State> {
     this.setState({...this.state, selectedTimeSlot: undefined})
   }
 
+  cancelReservation() {
+    Api.cancelReservation(this.props.id).then(response => {
+      const meeting = this.state.meeting;
+      if (meeting) {
+        meeting.status = MeetingStatus.CANCELED;
+        this.setState({...this.state, meeting})
+      }
+    })
+  }
+
   render() {
     let meeting = this.state.meeting;
     if (!meeting)
@@ -58,6 +68,7 @@ export default class MeetingComponent extends Component<Props, State> {
       ) : (
         <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
       )}
+      {meeting.status === MeetingStatus.PENDING && <button onClick={() => this.cancelReservation()}>لغو</button>}
     </div>
   }
 }
