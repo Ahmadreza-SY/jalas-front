@@ -31,6 +31,12 @@ class ApiClass {
   cancelReservation(meetingId: string) {
     return this.axiosInstance.delete(`/meeting/${meetingId}/reserve`)
   }
+
+  createMeeting(title: string, slots: TimeRange[], guests: string[]) {
+    return this.axiosInstance.post('/meeting', {
+      title, slots, guests
+    })
+  }
 }
 
 const Api = new ApiClass();
