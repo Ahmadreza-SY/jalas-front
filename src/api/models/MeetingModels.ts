@@ -1,11 +1,12 @@
-export default class Meeting {
+export class Meeting {
   constructor(
     public id: string,
     public title: string,
     public status: MeetingStatus,
     public time: TimeRange,
     public roomId: number,
-    public slots: MeetingPoll[]
+    public slots: MeetingPoll[],
+    public owner: string
   ) {
   }
 }
@@ -33,4 +34,10 @@ export class TimeRange {
     public end: number
   ) {
   }
+}
+
+export enum VoteOption {
+  AGREE = "AGREE",
+  DISAGREE = "DISAGREE",
+  REVOKE = "REVOKE"
 }

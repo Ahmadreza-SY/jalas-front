@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {TimeRange} from '../../api/models/Meeting';
+import {TimeRange} from '../../api/models/MeetingModels';
 import TimeSlotGeneralInfo from './TimeSlotGeneralInfo';
 
 export default class ReservedTimeSlot extends Component<Props, {}> {

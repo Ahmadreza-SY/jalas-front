@@ -1,5 +1,5 @@
 import React, {ChangeEvent, Component} from 'react';
-import {MeetingPoll} from '../../api/models/Meeting';
+import {MeetingPoll, VoteOption} from '../../api/models/MeetingModels';
 import Api from '../../api/Api';
 import ToastUtils from '../../utils/ToastUtils';
 import TimeSlotGeneralInfo from './TimeSlotGeneralInfo';
@@ -65,12 +65,52 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
       })
   }
 
+  voteForMeeting(vote: VoteOption) {
+    Api
+      .voteForMeeting(this.props.meetingId, this.props.email!!, this.props.timeSlot.time, vote)
+      .then(response => {
+        ToastUtils.success("Vote Submitted Successfully");
+        this.props.reserveCallback()
+      })
+      .catch(error => {
+        ToastUtils.error(error.response.data.message);
+      })
+  }
+
+  hasAlreadyAgreed() {
+    return this.props.timeSlot.agreeingUsers.includes(this.props.email!!)
+  }
+
+  hasAlreadyDisagreed() {
+    return this.props.timeSlot.disagreeingUsers.includes(this.props.email!!)
+  }
+
   render() {
     return <div>
       <div>
         <TimeSlotGeneralInfo time={this.props.timeSlot.time}/>
-        <p>{this.props.timeSlot.agreeingUsers.length} موافق</p>
-        <p>{this.props.timeSlot.disagreeingUsers.length} مخالف</p>
+        <p>
+          {this.props.timeSlot.agreeingUsers.length} موافق
+          {
+            this.props.email !== undefined && (
+              this.hasAlreadyAgreed() ?
+                <button onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
+                :
+                <button onClick={(() => this.voteForMeeting(VoteOption.AGREE))}>موافق</button>
+            )
+          }
+        </p>
+        <p>
+          {this.props.timeSlot.disagreeingUsers.length} مخالف
+          {
+            this.props.email !== undefined && (
+              this.hasAlreadyDisagreed() ?
+                <button onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
+                :
+                <button onClick={(() => this.voteForMeeting(VoteOption.DISAGREE))}>مخالف</button>
+            )
+          }
+        </p>
         {(this.props.selected && this.state.availableRooms.length > 0) && this.showReserveOptions()}
       </div>
     </div>
@@ -84,6 +124,7 @@ interface Props {
   reserveCallback: () => void
   pageEntryTime: Date
   getRoomsFailCallback: () => void
+  email: string | undefined
 }
 
 interface State {
