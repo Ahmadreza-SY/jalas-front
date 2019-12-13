@@ -3,6 +3,8 @@ import Api from '../../api/Api';
 import Meeting, {MeetingPoll, MeetingStatus} from '../../api/models/Meeting';
 import ReservableTimeSlotComponent from '../timeSlot/ReservableTimeSlot';
 import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
+import {RouteComponentProps} from 'react-router';
+
 
 export default class MeetingComponent extends Component<Props, State> {
   constructor(props: Props) {
@@ -15,7 +17,7 @@ export default class MeetingComponent extends Component<Props, State> {
   }
 
   getMeeting() {
-    Api.getMeeting(this.props.id).then(response => {
+    Api.getMeeting(this.props.match.params.meetingId).then(response => {
       this.setState({...this.state, meeting: response.data});
     })
   }
@@ -29,7 +31,7 @@ export default class MeetingComponent extends Component<Props, State> {
   }
 
   cancelReservation() {
-    Api.cancelReservation(this.props.id).then(response => {
+    Api.cancelReservation(this.props.match.params.meetingId).then(response => {
       const meeting = this.state.meeting;
       if (meeting) {
         meeting.status = MeetingStatus.CANCELED;
@@ -54,7 +56,7 @@ export default class MeetingComponent extends Component<Props, State> {
               <ReservableTimeSlotComponent
                 selected={this.state.selectedTimeSlot === index}
                 timeSlot={slot}
-                meetingId={this.props.id}
+                meetingId={this.props.match.params.meetingId}
                 reserveCallback={() => this.getMeeting()}
                 getRoomsFailCallback={() => this.clearSelectedTimeSlot()}
                 pageEntryTime={this.state.pageEntryTime}
@@ -79,6 +81,9 @@ interface State {
   pageEntryTime: Date
 }
 
-interface Props {
-  id: string
+interface MatchParams {
+  meetingId: string
+}
+
+interface Props extends RouteComponentProps<MatchParams> {
 }

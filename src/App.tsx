@@ -1,13 +1,17 @@
 import React from 'react';
+import {BrowserRouter as Router, Route} from 'react-router-dom'
 import './App.css';
-import Meeting from './components/meeting/Meeting';
+import MeetingComponent from './components/meeting/Meeting';
 
 
 const App: React.FC = () => {
   return (
-    <div className="App App-header">
-      <Meeting id={"5de101629cde7661f67be941"}/>
-    </div>
+
+    <Router>
+      <div className="App App-header">
+        <Route path="/meeting/:meetingId" component={MeetingComponent}/>
+      </div>
+    </Router>
   );
 };
 
