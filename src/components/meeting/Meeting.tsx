@@ -16,6 +16,11 @@ export default class MeetingComponent extends Component<Props, State> {
     this.getMeeting();
   }
 
+  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+    if (prevProps.location.pathname === "/meeting/new")
+      this.getMeeting()
+  }
+
   getMeeting() {
     Api.getMeeting(this.props.match.params.meetingId).then(response => {
       this.setState({...this.state, meeting: response.data});
