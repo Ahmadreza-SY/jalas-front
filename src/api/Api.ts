@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Meeting, {TimeRange, VoteOption} from './models/MeetingModels';
+import {Meeting, TimeRange, VoteOption} from './models/MeetingModels';
 import AvailableRoomsResponse from './models/AvailableRoomsResponse';
 
 class ApiClass {

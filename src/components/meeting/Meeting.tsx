@@ -46,7 +46,7 @@ export default class MeetingComponent extends Component<Props, State> {
   }
 
   isOwner() {
-    return this.props.match.params.email !== undefined || this.state.meeting?.owner === this.props.match.params.email
+    return this.props.match.params.email === undefined || this.state.meeting!!.owner === this.props.match.params.email
   }
 
   render() {
