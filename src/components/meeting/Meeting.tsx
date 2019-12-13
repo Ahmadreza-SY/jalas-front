@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Api from '../../api/Api';
-import Meeting, {MeetingPoll, MeetingStatus} from '../../api/models/Meeting';
+import {Meeting, MeetingPoll, MeetingStatus} from '../../api/models/MeetingModels';
 import ReservableTimeSlotComponent from '../timeSlot/ReservableTimeSlot';
 import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 import {RouteComponentProps} from 'react-router';
@@ -45,6 +45,10 @@ export default class MeetingComponent extends Component<Props, State> {
     })
   }
 
+  isOwner() {
+    return this.props.match.params.email === undefined || this.state.meeting!!.owner === this.props.match.params.email
+  }
+
   render() {
     let meeting = this.state.meeting;
     if (!meeting)
@@ -65,9 +69,12 @@ export default class MeetingComponent extends Component<Props, State> {
                 reserveCallback={() => this.getMeeting()}
                 getRoomsFailCallback={() => this.clearSelectedTimeSlot()}
                 pageEntryTime={this.state.pageEntryTime}
+                email={this.props.match.params.email}
               />
-              {this.state.selectedTimeSlot !== index &&
-              <button onClick={() => this.selectTimeSlot(index)}>انتخاب</button>}
+              {
+                this.isOwner() && this.state.selectedTimeSlot !== index &&
+                <button onClick={() => this.selectTimeSlot(index)}>انتخاب</button>
+              }
               <hr/>
             </li>
           ))}
@@ -88,6 +95,7 @@ interface State {
 
 interface MatchParams {
   meetingId: string
+  email: string | undefined
 }
 
 interface Props extends RouteComponentProps<MatchParams> {

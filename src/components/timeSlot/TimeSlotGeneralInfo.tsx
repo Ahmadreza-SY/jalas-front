@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import TimeUtils from '../../utils/TimeUtils';
-import {TimeRange} from '../../api/models/Meeting';
+import {TimeRange} from '../../api/models/MeetingModels';
 
 export default class TimeSlotGeneralInfo extends Component<Props, {}> {
 

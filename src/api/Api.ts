@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Meeting, {TimeRange} from './models/Meeting';
+import {Meeting, TimeRange, VoteOption} from './models/MeetingModels';
 import AvailableRoomsResponse from './models/AvailableRoomsResponse';
 
 class ApiClass {
@@ -35,6 +35,12 @@ class ApiClass {
   createMeeting(title: string, slots: TimeRange[], guests: string[]) {
     return this.axiosInstance.post('/meeting', {
       title, slots, guests
+    })
+  }
+
+  voteForMeeting(meetingId: string, email: string, slot: TimeRange, vote: VoteOption) {
+    return this.axiosInstance.put(`/meeting/${meetingId}/vote`, {
+      email, slot, vote
     })
   }
 }

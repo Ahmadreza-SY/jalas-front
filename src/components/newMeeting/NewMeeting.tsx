@@ -1,5 +1,5 @@
 import React, {ChangeEvent, Component} from 'react';
-import {TimeRange} from '../../api/models/Meeting';
+import {TimeRange} from '../../api/models/MeetingModels';
 import TimeUtils from '../../utils/TimeUtils';
 import Api from '../../api/Api';
 import {RouteComponentProps} from 'react-router';
@@ -17,7 +17,7 @@ export default class NewMeeting extends Component<Props, State> {
       start: 0,
       end: 0,
       email: '',
-      redirectLink: '/meeting/5df393ded2f5b557caa54585'
+      redirectLink: undefined
     }
   }
 
