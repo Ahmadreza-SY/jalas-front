@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 
 export default class MeetingItem extends Component<Props, State> {
