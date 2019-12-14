@@ -7,6 +7,10 @@ class ApiClass {
     baseURL: 'http://localhost:8080'
   });
 
+  getMeetings() {
+    return this.axiosInstance.get<Meeting[]>(`/meeting`);
+  }
+
   getMeeting(id: string) {
     return this.axiosInstance.get<Meeting>(`/meeting/${id}`);
   }
