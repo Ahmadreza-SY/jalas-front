@@ -120,10 +120,10 @@ export default class MeetingComponent extends Component<Props, State> {
     event.preventDefault();
     Api.addCommentForMeeting(this.state.meeting!!.id, this.state.commentContent)
       .then(response => {
-        let commentContent = "";
         let meeting = this.state.meeting;
+        let commentContent = "";
         meeting!!.comments.unshift(response.data);
-        this.setState({commentContent, meeting, ...this.state});
+        this.setState({meeting, commentContent});
         ToastUtils.success("Comment added successfully");
       })
       .catch(error => {
