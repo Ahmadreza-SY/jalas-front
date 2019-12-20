@@ -1,5 +1,5 @@
-import axios from 'axios';
-import {Meeting, TimeRange, VoteOption} from './models/MeetingModels';
+import axios, {AxiosPromise} from 'axios';
+import {Meeting, TimeRange, VoteOption, CommentModel} from './models/MeetingModels';
 import AvailableRoomsResponse from './models/AvailableRoomsResponse';
 
 class ApiClass {
@@ -46,6 +46,10 @@ class ApiClass {
     return this.axiosInstance.put(`/meeting/${meetingId}/vote`, {
       email, slot, vote
     })
+  }
+
+  addCommentForMeeting(meetingId: string, content: string): AxiosPromise<CommentModel> {
+    return this.axiosInstance.post(`/meeting/${meetingId}/comment`, {content})
   }
 }
 

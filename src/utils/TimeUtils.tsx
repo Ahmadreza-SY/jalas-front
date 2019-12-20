@@ -26,6 +26,10 @@ class TimeUtils {
             return date.locale('fa').format(TimeUtils.DATE_FORMAT);
         return date.format(TimeUtils.DATE_TIME_FORMAT);
     }
+
+    static getFromNowDuration(dateTs: number) {
+        return moment(dateTs).fromNow();
+    }
 }
 
 export default TimeUtils;
