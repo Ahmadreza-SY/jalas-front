@@ -11,7 +11,6 @@ import ToastUtils from "../../utils/ToastUtils";
 export default class MeetingComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.handleAddComment = this.handleAddComment.bind(this);
     this.state = {
       meeting: undefined,
       selectedTimeSlot: undefined,
