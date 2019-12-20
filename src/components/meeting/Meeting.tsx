@@ -6,6 +6,8 @@ import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 import {RouteComponentProps} from 'react-router';
 import CommentItem from './CommentItem';
 import ToastUtils from "../../utils/ToastUtils";
+import Header from "../common/Header";
+import {User} from '../../api/models/UserModels';
 
 
 export default class MeetingComponent extends Component<Props, State> {
@@ -17,12 +19,14 @@ export default class MeetingComponent extends Component<Props, State> {
       pageEntryTime: new Date(),
 	  commentContent: "",
 	  newSlotStart: 0,
-	  newSlotEnd: 0
+	  newSlotEnd: 0,
+	  user: undefined
     };
   }
 
   componentDidMount(): void {
     this.getMeeting();
+    Api.profile().then(response => this.setState({user: response.data}))
   }
 
   componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
@@ -106,85 +110,57 @@ export default class MeetingComponent extends Component<Props, State> {
 	);
     if (!meeting)
       return <div className="spinner-border"/>;
-    return (
-		<div>
-			<h1>{meeting.title}</h1>
-			<h3>{meeting.status} وضعیت فعلی</h3>
-			{meeting.status === MeetingStatus.ELECTING ? (
-				<ul>
-					{meeting.slots.map((slot: MeetingPoll, index: number) => (
-						<li key={index}>
-							<ReservableTimeSlotComponent
-								selected={this.state.selectedTimeSlot === index}
-								timeSlot={slot}
-								meetingId={this.props.match.params.meetingId}
-								reserveCallback={() => this.getMeeting()}
-								getRoomsFailCallback={() =>
-									this.clearSelectedTimeSlot()
-								}
-								pageEntryTime={this.state.pageEntryTime}
-								email={this.props.match.params.email}
-							/>
-							{this.isOwner() &&
-								this.state.selectedTimeSlot !== index && (
-									<button
-										className="btn btn-primary"
-										onClick={() =>
-											this.selectTimeSlot(index)
-										}>
-										انتخاب
-									</button>
-								)}
-							<hr />
-						</li>
-					))}
-				</ul>
-			) : (
-				<ReservedTimeSlot time={meeting.time} roomId={meeting.roomId} />
-			)}
-
-			{meeting.status === MeetingStatus.PENDING && (
-				<button
-					className="btn btn-danger"
-					onClick={() => this.cancelReservation()}>
-					لغو
-				</button>
-			)}
-
-			{meeting.status === MeetingStatus.ELECTING ? addtionalOptionForm : null}
-
-			<div>
-				<h4>Comments</h4>
-				<div>
-					<form
-						className="form-inline"
-						onSubmit={e => this.handleAddComment(e)}>
-						<div className="form-group mx-sm-3 mb-2">
-							<label htmlFor="inputPassword2" className="sr-only">
-								متن
-							</label>
-							<input
-								type="text"
-								className="form-control"
-								id="inputCommentContent"
-								placeholder="متن"
-								onChange={e => this.handleCommentChange(e)}
-								value={this.state.commentContent}
-							/>
-						</div>
-						<button type="submit" className="btn btn-primary mb-2">
-							ثبت کامنت جدید
-						</button>
-					</form>
-					{meeting.comments.map(
-						(comment: CommentModel, index: number) => (
-							<CommentItem comment={comment} />
-						)
-					)}
-				</div>
-			</div>
-		</div>
-	);
+    return <div>
+      <Header user={this.state.user}/>
+      <h1>
+        {meeting.title}
+      </h1>
+      <h3>{meeting.status} وضعیت فعلی</h3>
+      {meeting.status === MeetingStatus.ELECTING ? (
+        <ul>
+          {meeting.slots.map((slot: MeetingPoll, index: number) => (
+            <li key={index}>
+              <ReservableTimeSlotComponent
+                selected={this.state.selectedTimeSlot === index}
+                timeSlot={slot}
+                meetingId={this.props.match.params.meetingId}
+                reserveCallback={() => this.getMeeting()}
+                getRoomsFailCallback={() => this.clearSelectedTimeSlot()}
+                pageEntryTime={this.state.pageEntryTime}
+                email={this.props.match.params.email}
+              />
+              {
+                this.isOwner() && this.state.selectedTimeSlot !== index &&
+                <button className="btn btn-primary" onClick={() => this.selectTimeSlot(index)}>انتخاب</button>
+              }
+              <hr/>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
+      )}
+      {meeting.status === MeetingStatus.PENDING &&
+      <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
+	  {meeting.status === MeetingStatus.ELECTING ? addtionalOptionForm : null}
+      <div>
+        <h4>Comments</h4>
+        <div>
+          <form className="form-inline" onSubmit={(e) => this.handleAddComment(e)}>
+            <div className="form-group mx-sm-3 mb-2">
+              <label htmlFor="inputPassword2" className="sr-only">متن</label>
+              <input type="text" className="form-control" id="inputCommentContent" placeholder="متن"
+                     onChange={(e) => this.handleCommentChange(e)}
+                     value={this.state.commentContent}/>
+            </div>
+            <button type="submit" className="btn btn-primary mb-2">ثبت کامنت جدید</button>
+          </form>
+          {meeting.comments.map((comment: CommentModel, index: number) => (
+            <CommentItem comment={comment}/>
+          ))}
+        </div>
+      </div>
+    </div>
   }
 
   handleCommentChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -201,9 +177,6 @@ export default class MeetingComponent extends Component<Props, State> {
         this.setState({meeting, commentContent});
         ToastUtils.success("Comment added successfully");
       })
-      .catch(error => {
-        ToastUtils.error(error.response.data.message);
-      });
   }
 }
 
@@ -213,7 +186,8 @@ interface State {
   pageEntryTime: Date
   commentContent: string,
   newSlotStart: number,
-  newSlotEnd: number
+  newSlotEnd: number,
+  user: User | undefined
 }
 
 interface MatchParams {

@@ -1,11 +1,36 @@
 import axios, {AxiosPromise} from 'axios';
-import {Meeting, TimeRange, VoteOption, CommentModel} from './models/MeetingModels';
+import {CommentModel, Meeting, TimeRange, VoteOption} from './models/MeetingModels';
 import AvailableRoomsResponse from './models/AvailableRoomsResponse';
+import {LoginResponse, User} from "./models/UserModels";
+import ToastUtils from "../utils/ToastUtils";
 
 class ApiClass {
   private axiosInstance = axios.create({
     baseURL: 'http://localhost:8080'
   });
+
+  constructor() {
+    this.axiosInstance.interceptors.request.use(config => {
+        if (config.url && (config.url.includes("/login")))
+          return config;
+        config.headers["Authorization"] = localStorage.getItem("token");
+        return config
+      },
+      error => Promise.reject(error)
+    );
+
+    this.axiosInstance.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response.status === 401) {
+          localStorage.clear();
+          window.location.pathname = "/login";
+        }
+        ToastUtils.error(error.response.data.message);
+        return Promise.reject(error)
+      }
+    )
+  };
 
   getMeetings() {
     return this.axiosInstance.get<Meeting[]>(`/meeting`);
@@ -54,6 +79,14 @@ class ApiClass {
 
   addCommentForMeeting(meetingId: string, content: string): AxiosPromise<CommentModel> {
     return this.axiosInstance.post(`/meeting/${meetingId}/comment`, {content})
+  }
+
+  login(username: string, password: string): AxiosPromise<LoginResponse> {
+    return this.axiosInstance.post(`/auth/login`, {username, password})
+  }
+
+  profile(): AxiosPromise<User> {
+    return this.axiosInstance.get(`/auth/profile`)
   }
 }
 

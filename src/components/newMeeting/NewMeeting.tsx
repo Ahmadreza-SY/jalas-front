@@ -3,8 +3,9 @@ import {TimeRange} from '../../api/models/MeetingModels';
 import TimeUtils from '../../utils/TimeUtils';
 import Api from '../../api/Api';
 import {RouteComponentProps} from 'react-router';
-import ToastUtils from '../../utils/ToastUtils';
 import {Redirect} from 'react-router-dom';
+import {User} from '../../api/models/UserModels';
+import Header from '../common/Header';
 
 export default class NewMeeting extends Component<Props, State> {
 
@@ -17,10 +18,14 @@ export default class NewMeeting extends Component<Props, State> {
       start: 0,
       end: 0,
       email: '',
-      redirectLink: undefined
+      redirectLink: undefined,
+      user: undefined
     }
   }
 
+  componentDidMount() {
+    Api.profile().then(response => this.setState({user: response.data}))
+  }
 
   addSlot() {
     if (this.state.start === 0 || this.state.end === 0)
@@ -77,6 +82,7 @@ export default class NewMeeting extends Component<Props, State> {
 
   showSlots() {
     return <div>
+      <Header user={this.state.user}/>
       {this.state.slots.map((slot: TimeRange, index: number) => (
         <div key={index}>
           <p>Start: {TimeUtils.getDateTimeFormat(slot.start, false)}</p>
@@ -117,9 +123,6 @@ export default class NewMeeting extends Component<Props, State> {
       .then(response => {
         this.setState({redirectLink: `/meeting/${response.data.id}`})
       })
-      .catch(e => {
-        ToastUtils.error(e.response.data.message)
-      })
   }
 
   render() {
@@ -152,4 +155,5 @@ interface State {
   end: number
   email: string,
   redirectLink: string | undefined,
+  user: User | undefined
 }

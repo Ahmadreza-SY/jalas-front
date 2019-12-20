@@ -3,17 +3,21 @@ import { Link } from "react-router-dom";
 import MeetingItem from "./MeetingItem";
 import { Meeting } from "../../api/models/MeetingModels";
 import Api from "../../api/Api";
+import Header from "../common/Header";
+import {User} from "../../api/models/UserModels";
 
 export default class MeetingList extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
-			meetings: []
+			meetings: [],
+			user: undefined
 		};
 	}
 
 	componentDidMount(): void {
 		this.getMeetings();
+		Api.profile().then(response => this.setState({user: response.data}))
 	}
 
 	getMeetings() {
@@ -28,6 +32,7 @@ export default class MeetingList extends Component<Props, State> {
 	render() {
 		return (
 			<div>
+				<Header user={this.state.user}/>
 				<Link to="/meeting/new">
 					<button>Create New Poll</button>
 				</Link>
@@ -54,5 +59,6 @@ export default class MeetingList extends Component<Props, State> {
 interface Props {}
 
 interface State {
-	meetings: Meeting[];
+	meetings: Meeting[]
+	user: User | undefined
 }
