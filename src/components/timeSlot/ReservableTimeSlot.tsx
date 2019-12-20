@@ -56,7 +56,6 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
         this.props.reserveCallback()
       })
       .catch(error => {
-        ToastUtils.error(error.response.data.message);
         if (error.status === 400) {
           this.getAvailableRooms()
         } else {
@@ -71,9 +70,6 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
       .then(response => {
         ToastUtils.success("Vote Submitted Successfully");
         this.props.reserveCallback()
-      })
-      .catch(error => {
-        ToastUtils.error(error.response.data.message);
       })
   }
 

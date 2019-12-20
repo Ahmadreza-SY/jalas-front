@@ -6,6 +6,8 @@ import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 import {RouteComponentProps} from 'react-router';
 import CommentItem from './CommentItem';
 import ToastUtils from "../../utils/ToastUtils";
+import Header from "../common/Header";
+import {User} from '../../api/models/UserModels';
 
 
 export default class MeetingComponent extends Component<Props, State> {
@@ -15,12 +17,14 @@ export default class MeetingComponent extends Component<Props, State> {
       meeting: undefined,
       selectedTimeSlot: undefined,
       pageEntryTime: new Date(),
-      commentContent: ""
+      commentContent: "",
+      user: undefined
     };
   }
 
   componentDidMount(): void {
     this.getMeeting();
+    Api.profile().then(response => this.setState({user: response.data}))
   }
 
   componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
@@ -61,6 +65,7 @@ export default class MeetingComponent extends Component<Props, State> {
     if (!meeting)
       return <div className="spinner-border"/>;
     return <div>
+      <Header user={this.state.user}/>
       <h1>
         {meeting.title}
       </h1>
@@ -125,9 +130,6 @@ export default class MeetingComponent extends Component<Props, State> {
         this.setState({meeting, commentContent});
         ToastUtils.success("Comment added successfully");
       })
-      .catch(error => {
-        ToastUtils.error(error.response.data.message);
-      });
   }
 }
 
@@ -136,6 +138,7 @@ interface State {
   selectedTimeSlot: number | undefined
   pageEntryTime: Date
   commentContent: string
+  user: User | undefined
 }
 
 interface MatchParams {
