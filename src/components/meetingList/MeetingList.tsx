@@ -11,7 +11,8 @@ export default class MeetingList extends Component<Props, State> {
 		super(props);
 		this.state = {
 			meetings: [],
-			user: undefined
+			user: undefined,
+			myPolls: false
 		};
 	}
 
@@ -29,14 +30,37 @@ export default class MeetingList extends Component<Props, State> {
 		});
 	}
 
+	filterPolls() {
+		let myPollsChecked = !this.state.myPolls;
+		if (myPollsChecked) {
+			Api.getPolls().then(response => {
+				this.setState({ myPolls: myPollsChecked, meetings: response.data });
+			})
+		} else {
+			this.getMeetings()
+		}
+	}
+
 	render() {
 		return (
 			<div>
-				<Header user={this.state.user}/>
+				<Header user={this.state.user} />
 				<Link to="/meeting/new">
 					<button>Create New Poll</button>
 				</Link>
 				<hr />
+				<br />
+				<label>
+					<input
+						type="checkbox"
+						className="form-control"
+						defaultChecked={this.state.myPolls}
+						onChange={() =>
+							this.filterPolls()
+						}
+					/>
+					جلسات من
+				</label>
 				<ul>
 					{this.state.meetings.map(
 						(meeting: Meeting, index: number) => (
@@ -60,5 +84,6 @@ interface Props {}
 
 interface State {
 	meetings: Meeting[]
-	user: User | undefined
+	user: User | undefined,
+	myPolls: boolean
 }
