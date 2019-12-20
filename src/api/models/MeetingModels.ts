@@ -6,7 +6,8 @@ export class Meeting {
     public time: TimeRange,
     public roomId: number,
     public slots: MeetingPoll[],
-    public owner: string
+    public owner: string,
+    public comments: CommentModel[]
   ) {
   }
 }
@@ -40,4 +41,14 @@ export enum VoteOption {
   AGREE = "AGREE",
   DISAGREE = "DISAGREE",
   REVOKE = "REVOKE"
+}
+
+export class CommentModel {
+  constructor(
+    public id: string,
+    public owner: string,
+    public content: string,
+    public creationDate: number
+  ) {
+  }
 }

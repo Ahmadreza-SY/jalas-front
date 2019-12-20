@@ -1,15 +1,22 @@
-import React, {Component} from 'react';
+import React, {Component, FormEvent} from 'react';
 import Api from '../../api/Api';
-import {Meeting, MeetingPoll, MeetingStatus} from '../../api/models/MeetingModels';
+import {CommentModel, Meeting, MeetingPoll, MeetingStatus} from '../../api/models/MeetingModels';
 import ReservableTimeSlotComponent from '../timeSlot/ReservableTimeSlot';
 import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 import {RouteComponentProps} from 'react-router';
+import CommentItem from './CommentItem';
+import ToastUtils from "../../utils/ToastUtils";
 
 
 export default class MeetingComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {meeting: undefined, selectedTimeSlot: undefined, pageEntryTime: new Date()}
+    this.state = {
+      meeting: undefined,
+      selectedTimeSlot: undefined,
+      pageEntryTime: new Date(),
+      commentContent: ""
+    };
   }
 
   componentDidMount(): void {
@@ -73,7 +80,7 @@ export default class MeetingComponent extends Component<Props, State> {
               />
               {
                 this.isOwner() && this.state.selectedTimeSlot !== index &&
-                <button onClick={() => this.selectTimeSlot(index)}>انتخاب</button>
+                <button className="btn btn-primary" onClick={() => this.selectTimeSlot(index)}>انتخاب</button>
               }
               <hr/>
             </li>
@@ -82,8 +89,45 @@ export default class MeetingComponent extends Component<Props, State> {
       ) : (
         <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
       )}
-      {meeting.status === MeetingStatus.PENDING && <button onClick={() => this.cancelReservation()}>لغو</button>}
+      {meeting.status === MeetingStatus.PENDING &&
+      <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
+      <div>
+        <h4>Comments</h4>
+        <div>
+          <form className="form-inline" onSubmit={(e) => this.handleAddComment(e)}>
+            <div className="form-group mx-sm-3 mb-2">
+              <label htmlFor="inputPassword2" className="sr-only">متن</label>
+              <input type="text" className="form-control" id="inputCommentContent" placeholder="متن"
+                     onChange={(e) => this.handleCommentChange(e)}
+                     value={this.state.commentContent}/>
+            </div>
+            <button type="submit" className="btn btn-primary mb-2">ثبت کامنت جدید</button>
+          </form>
+          {meeting.comments.map((comment: CommentModel, index: number) => (
+            <CommentItem comment={comment}/>
+          ))}
+        </div>
+      </div>
     </div>
+  }
+
+  handleCommentChange(e: React.ChangeEvent<HTMLInputElement>) {
+    this.setState({...this.state, commentContent: e.target.value});
+  }
+
+  handleAddComment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    Api.addCommentForMeeting(this.state.meeting!!.id, this.state.commentContent)
+      .then(response => {
+        let meeting = this.state.meeting;
+        let commentContent = "";
+        meeting!!.comments.unshift(response.data);
+        this.setState({meeting, commentContent});
+        ToastUtils.success("Comment added successfully");
+      })
+      .catch(error => {
+        ToastUtils.error(error.response.data.message);
+      });
   }
 }
 
@@ -91,6 +135,7 @@ interface State {
   meeting: Meeting | undefined
   selectedTimeSlot: number | undefined
   pageEntryTime: Date
+  commentContent: string
 }
 
 interface MatchParams {

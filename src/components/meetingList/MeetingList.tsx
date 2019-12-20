@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import MeetingItem from "../meetingItem/MeetingItem";
+import MeetingItem from "./MeetingItem";
 import { Meeting } from "../../api/models/MeetingModels";
 import Api from "../../api/Api";
 
