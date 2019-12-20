@@ -1,6 +1,6 @@
-import React, {Component, FormEvent} from 'react';
+import React, {Component, FormEvent, ChangeEvent} from 'react';
 import Api from '../../api/Api';
-import {CommentModel, Meeting, MeetingPoll, MeetingStatus} from '../../api/models/MeetingModels';
+import {CommentModel, Meeting, MeetingPoll, MeetingStatus, TimeRange} from '../../api/models/MeetingModels';
 import ReservableTimeSlotComponent from '../timeSlot/ReservableTimeSlot';
 import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 import {RouteComponentProps} from 'react-router';
@@ -17,8 +17,10 @@ export default class MeetingComponent extends Component<Props, State> {
       meeting: undefined,
       selectedTimeSlot: undefined,
       pageEntryTime: new Date(),
-      commentContent: "",
-      user: undefined
+	  commentContent: "",
+	  newSlotStart: 0,
+	  newSlotEnd: 0,
+	  user: undefined
     };
   }
 
@@ -60,8 +62,52 @@ export default class MeetingComponent extends Component<Props, State> {
     return this.props.match.params.email === undefined || this.state.meeting!!.owner === this.props.match.params.email
   }
 
+  updateStart(e: ChangeEvent<HTMLInputElement>) {
+    if (!e.target.value)
+      return;
+	const date = new Date(e.target.value);
+    this.setState({...this.state, newSlotStart: date.getTime()})
+  }
+
+  updateEnd(e: ChangeEvent<HTMLInputElement>) {
+    if (!e.target.value)
+      return;
+    const date = new Date(e.target.value);
+    this.setState({...this.state, newSlotEnd: date.getTime()})
+  }
+
+  updateMeeting() {
+	if (this.state.newSlotStart == undefined || this.state.newSlotEnd == undefined) {
+	  ToastUtils.error("No slot entered!");
+	  return
+	}
+	Api.updateMeeting(
+		this.props.match.params.meetingId,
+		new TimeRange(this.state.newSlotStart, this.state.newSlotEnd)
+	)
+		.then(response => {
+			let meeting = response.data;
+			this.setState({ meeting });
+			ToastUtils.success("New slot added successfully");
+		})
+		.catch(error => {
+			ToastUtils.error(error.response.data.message);
+		});
+  }
+
   render() {
-    let meeting = this.state.meeting;
+	let meeting = this.state.meeting;
+	let addtionalOptionForm = (
+		<div>
+			شروع
+			<input className="form-control" onChange={e => this.updateStart(e)} type="datetime-local" />
+			پایان
+			<input className="form-control" onChange={e => this.updateEnd(e)} type="datetime-local" />
+			<button className="btn btn-success" onClick={() => this.updateMeeting()}>
+				ثبت زمان جدید
+			</button>
+		</div>
+	);
     if (!meeting)
       return <div className="spinner-border"/>;
     return <div>
@@ -96,6 +142,7 @@ export default class MeetingComponent extends Component<Props, State> {
       )}
       {meeting.status === MeetingStatus.PENDING &&
       <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
+	  {meeting.status === MeetingStatus.ELECTING ? addtionalOptionForm : null}
       <div>
         <h4>Comments</h4>
         <div>
@@ -137,7 +184,9 @@ interface State {
   meeting: Meeting | undefined
   selectedTimeSlot: number | undefined
   pageEntryTime: Date
-  commentContent: string
+  commentContent: string,
+  newSlotStart: number,
+  newSlotEnd: number,
   user: User | undefined
 }
 
