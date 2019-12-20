@@ -88,10 +88,10 @@ export default class NewMeeting extends Component<Props, State> {
       <label>
         Slots
         Start
-        <input onChange={(e) => this.updateStart(e)} type="datetime-local"/>
+        <input className="form-control" onChange={(e) => this.updateStart(e)} type="datetime-local"/>
         End
-        <input onChange={(e) => this.updateEnd(e)} type="datetime-local"/>
-        <button onClick={() => this.addSlot()}>Add</button>
+        <input className="form-control" onChange={(e) => this.updateEnd(e)} type="datetime-local"/>
+        <button className="btn btn-primary" onClick={() => this.addSlot()}>Add</button>
       </label>
     </div>
   }
@@ -106,8 +106,8 @@ export default class NewMeeting extends Component<Props, State> {
           </div>
         )
       )}
-      <input onChange={(e) => this.updateEmail(e)} type="email"/>
-      <button onClick={() => this.addEmail()}> Add</button>
+      <input className="form-control" onChange={(e) => this.updateEmail(e)} type="email"/>
+      <button className="btn btn-primary" onClick={() => this.addEmail()}> Add</button>
     </div>
   }
 
@@ -128,11 +128,11 @@ export default class NewMeeting extends Component<Props, State> {
     return <div className="row">
       <label className="col-md-12">
         Title:
-        <input onChange={(e) => this.updateTitle(e)} type="text"/>
+        <input className="form-control" onChange={(e) => this.updateTitle(e)} type="text"/>
       </label>
       {this.showSlots()}
       {this.showGuests()}
-      <input onClick={() => this.createMeeting()} type="submit" value="Submit"/>
+      <input className="btn btn-success" onClick={() => this.createMeeting()} type="submit" value="Submit"/>
     </div>
 
   }

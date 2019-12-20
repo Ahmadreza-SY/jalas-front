@@ -15,6 +15,10 @@ class ApiClass {
     return this.axiosInstance.get<Meeting>(`/meeting/${id}`);
   }
 
+  updateMeeting(id: string, newSlot: TimeRange) {
+	return this.axiosInstance.put(`/meeting/${id}`, {newSlots: [newSlot]})
+  }
+
   getAvailableRooms(start: number, end: number) {
     return this.axiosInstance.get<AvailableRoomsResponse>('/meeting/available-rooms', {
       params: {
