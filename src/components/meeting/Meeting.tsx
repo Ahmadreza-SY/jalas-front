@@ -77,7 +77,7 @@ export default class MeetingComponent extends Component<Props, State> {
   }
 
   updateMeeting() {
-	if (this.state.newSlotStart == undefined || this.state.newSlotEnd == undefined) {
+	if (this.state.newSlotStart == 0 || this.state.newSlotEnd == 0) {
 	  ToastUtils.error("No slot entered!");
 	  return
 	}
@@ -90,9 +90,6 @@ export default class MeetingComponent extends Component<Props, State> {
 			this.setState({ meeting });
 			ToastUtils.success("New slot added successfully");
 		})
-		.catch(error => {
-			ToastUtils.error(error.response.data.message);
-		});
   }
 
   render() {
