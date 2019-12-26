@@ -5,6 +5,7 @@ import MeetingComponent from './components/meeting/Meeting';
 import MeetingList from './components/meetingList/MeetingList';
 import NewMeeting from './components/newMeeting/NewMeeting';
 import Login from "./components/login/Login";
+import Report from "./components/admin/Report";
 
 
 const App: React.FC = () => {
@@ -17,6 +18,7 @@ const App: React.FC = () => {
           <Route exact path="/meeting/new" component={NewMeeting}/>
           <Route exact path="/meeting/:meetingId" component={MeetingComponent}/>
           <Route exact path="/meeting/:meetingId/vote/:email" component={MeetingComponent}/>
+          <Route exact path="/report" component={Report}/>
         </Switch>
       </Router>
     </div>

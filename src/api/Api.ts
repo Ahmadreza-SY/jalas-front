@@ -3,6 +3,7 @@ import {CommentModel, Meeting, TimeRange, VoteOption} from './models/MeetingMode
 import AvailableRoomsResponse from './models/AvailableRoomsResponse';
 import {LoginResponse, User} from "./models/UserModels";
 import ToastUtils from "../utils/ToastUtils";
+import {GeneralReport} from "./models/StatModels";
 
 class ApiClass {
   private axiosInstance = axios.create({
@@ -87,6 +88,10 @@ class ApiClass {
 
   profile(): AxiosPromise<User> {
     return this.axiosInstance.get(`/auth/profile`)
+  }
+
+  report(): AxiosPromise<GeneralReport> {
+    return this.axiosInstance.get(`/report`)
   }
 }
 
