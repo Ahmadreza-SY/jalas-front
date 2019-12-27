@@ -36,15 +36,18 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
   }
 
   showReserveOptions() {
-    return <div>
-      <select onChange={(event) => this.selectRoom(event)} name="rooms">
-        {
-          this.state.availableRooms.map((item: number) =>
-            <option key={item} value={item}>{item}</option>
-          )
-        }
-      </select>
-      <button color="green" onClick={() => this.reserveRoom()}>رزرو</button>
+    return <div className="mt-2 row no-gutters">
+      <div className="col-auto">
+        <select className="form-control" onChange={(event) => this.selectRoom(event)} name="rooms">
+          {
+            this.state.availableRooms.map((item: number) =>
+              <option key={item} value={item}>{item}</option>
+            )
+          }
+        </select></div>
+      <div className="col-auto ml-2">
+        <button className="btn btn-primary" color="green" onClick={() => this.reserveRoom()}>رزرو</button>
+      </div>
     </div>
   }
 
@@ -85,28 +88,35 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
     return <div>
       <div>
         <TimeSlotGeneralInfo time={this.props.timeSlot.time}/>
-        <p>
-          {this.props.timeSlot.agreeingUsers.length} موافق
-          {
-            this.props.email !== undefined && (
-              this.hasAlreadyAgreed() ?
-                <button onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
-                :
-                <button onClick={(() => this.voteForMeeting(VoteOption.AGREE))}>موافق</button>
-            )
-          }
-        </p>
-        <p>
-          {this.props.timeSlot.disagreeingUsers.length} مخالف
-          {
-            this.props.email !== undefined && (
-              this.hasAlreadyDisagreed() ?
-                <button onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
-                :
-                <button onClick={(() => this.voteForMeeting(VoteOption.DISAGREE))}>مخالف</button>
-            )
-          }
-        </p>
+        <div className="row justify-content-center mt-2">
+          <div className="col-auto">
+            <span>{this.props.timeSlot.agreeingUsers.length}</span>
+            <span className="mr-3">موافق</span>
+            {
+              this.props.email != undefined && (
+                this.hasAlreadyAgreed() ?
+                  <button className="btn btn-outline-danger"
+                          onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
+                  :
+                  <button className="btn btn-success"
+                          onClick={(() => this.voteForMeeting(VoteOption.AGREE))}>موافق</button>
+              )
+            }
+          </div>
+          <div className="col-auto">
+            <span>{this.props.timeSlot.disagreeingUsers.length}</span><span className="mr-3"> مخالف</span>
+            {
+              this.props.email !== undefined && (
+                this.hasAlreadyDisagreed() ?
+                  <button className="btn btn-outline-danger"
+                          onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
+                  :
+                  <button className="btn btn-danger"
+                          onClick={(() => this.voteForMeeting(VoteOption.DISAGREE))}>مخالف</button>
+              )
+            }
+          </div>
+        </div>
         {(this.props.selected && this.state.availableRooms.length > 0) && this.showReserveOptions()}
       </div>
     </div>

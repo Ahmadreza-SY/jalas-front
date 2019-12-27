@@ -5,8 +5,8 @@ import TimeSlotGeneralInfo from './TimeSlotGeneralInfo';
 export default class ReservedTimeSlot extends Component<Props, {}> {
 
   render() {
-    return <div>
-      <div>
+    return <div className="list-group">
+      <div className="list-group-item list-group-item-dark">
         <TimeSlotGeneralInfo time={this.props.time}/>
         <p>{this.props.roomId} اتاق</p>
       </div>

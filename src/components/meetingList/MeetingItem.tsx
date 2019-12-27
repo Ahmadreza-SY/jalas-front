@@ -1,38 +1,41 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React, {Component} from "react";
+import {Link} from "react-router-dom";
 
 export default class MeetingItem extends Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			id: "",
-			title: "",
-			state: ""
-		};
-	}
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      id: "",
+      title: "",
+      state: ""
+    };
+  }
 
-	render() {
-		return (
-			<Link
-				to={"/meeting/" + this.props.id}
-				style={{ color: "inherit", textDecoration: "inherit" }}>
-				<div className="row">
-					<label className="col-md-12">
-						Title: {this.props.title}
-					</label>
-					<label className="col-md-12">
-						State: {this.props.state}
-					</label>
-				</div>
-			</Link>
-		);
-	}
+  render() {
+    return (
+      <Link
+        to={"/meeting/" + this.props.id}
+        style={{color: "inherit", textDecoration: "inherit"}}>
+        <li className="list-group-item list-group-item-dark">
+          <div>
+					<span className="">
+						{this.props.title}
+					</span>
+            <span className="badge badge-dark ml-3">
+						{this.props.state}
+					</span>
+          </div>
+        </li>
+      </Link>
+    );
+  }
 }
 
 interface Props {
-	id: string;
-	title: string;
-	state: string;
+  id: string;
+  title: string;
+  state: string;
 }
 
-interface State {}
+interface State {
+}

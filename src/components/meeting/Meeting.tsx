@@ -101,14 +101,23 @@ export default class MeetingComponent extends Component<Props, State> {
   render() {
     let meeting = this.state.meeting;
     let additionalOptionForm = (
-      <div>
-        شروع
-        <input className="form-control" onChange={e => this.updateStart(e)} type="datetime-local"/>
-        پایان
-        <input className="form-control" onChange={e => this.updateEnd(e)} type="datetime-local"/>
-        <button className="btn btn-success" onClick={() => this.updateMeeting()}>
-          ثبت زمان جدید
-        </button>
+      <div className="card text-white bg-dark mt-2">
+        <div className="card-header">ثبت زمان جدید</div>
+        <div className="card-body">
+          <div className="form-row">
+            <div className="form-group col-md-6">
+              <label htmlFor="inputEmail4">شروع</label>
+              <input className="form-control" onChange={e => this.updateStart(e)} type="datetime-local"/>
+            </div>
+            <div className="form-group col-md-6">
+              <label htmlFor="inputPassword4">پایان</label>
+              <input className="form-control" onChange={e => this.updateEnd(e)} type="datetime-local"/>
+            </div>
+          </div>
+          <button className="btn btn-success" onClick={() => this.updateMeeting()}>
+            ثبت زمان جدید
+          </button>
+        </div>
       </div>
     );
     if (this.state.redirectLink !== undefined)
@@ -116,58 +125,77 @@ export default class MeetingComponent extends Component<Props, State> {
     if (!meeting)
       return <div className="spinner-border"/>;
     return <div>
-      <h1>
-        {meeting.title}
-      </h1>
-      <h3>{meeting.status} وضعیت فعلی</h3>
-      {meeting.status === MeetingStatus.ELECTING ? (
-        <ul>
-          {meeting.slots.map((slot: MeetingPoll, index: number) => (
-            <li key={index}>
-              <ReservableTimeSlotComponent
-                selected={this.state.selectedTimeSlot === index}
-                timeSlot={slot}
-                meetingId={this.props.match.params.meetingId}
-                reserveCallback={() => this.getMeeting()}
-                getRoomsFailCallback={() => this.clearSelectedTimeSlot()}
-                pageEntryTime={this.state.pageEntryTime}
-                email={this.props.match.params.email}
-              />
-              {
-                this.isOwner() && this.state.selectedTimeSlot !== index &&
-                <button className="btn btn-primary" onClick={() => this.selectTimeSlot(index)}>انتخاب</button>
-              }
-              <hr/>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
-      )}
-      {meeting.status === MeetingStatus.PENDING &&
-      <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
+      <div className="card text-white bg-dark">
+        <div className="card-header">
+          <div className="row align-items-center">
+            <div className="col">
+              <h1 className="mb-0">
+                {meeting.title}
+                <span className="badge badge-dark ml-2">{meeting.status}</span>
+              </h1></div>
+            <div className="col-auto">
+              {meeting.status === MeetingStatus.PENDING &&
+              <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="card text-white bg-dark mt-2">
+        <div className="card-header">گزینه ها</div>
+        <div className="card-body">
+
+          {meeting.status === MeetingStatus.ELECTING ? (
+            <ul className="list-group">
+              {meeting.slots.map((slot: MeetingPoll, index: number) => (
+                <li className="list-group-item list-group-item-dark" key={index}>
+                  <ReservableTimeSlotComponent
+                    selected={this.state.selectedTimeSlot === index}
+                    timeSlot={slot}
+                    meetingId={this.props.match.params.meetingId}
+                    reserveCallback={() => this.getMeeting()}
+                    getRoomsFailCallback={() => this.clearSelectedTimeSlot()}
+                    pageEntryTime={this.state.pageEntryTime}
+                    email={this.props.match.params.email}
+                  />
+                  {
+                    this.isOwner() && this.state.selectedTimeSlot !== index &&
+                    <div className="mt-2">
+                        <button className="btn btn-primary" onClick={() => this.selectTimeSlot(index)}>انتخاب</button>
+                    </div>
+                  }
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
+          )}
+
+        </div>
+      </div>
       {meeting.status === MeetingStatus.ELECTING ? additionalOptionForm : null}
-      <div>
-        <h4>Comments</h4>
-        <div>
-          <form className="form-inline" onSubmit={(e) => this.handleAddComment(e)}>
-            <div className="form-group mx-sm-3 mb-2">
+      <div className="card text-white bg-dark mt-2">
+        <div className="card-header"><h4>Comments</h4></div>
+        <div className="card-body">
+          <form onSubmit={(e) => this.handleAddComment(e)}>
+            <div className="form-group">
               <label htmlFor="inputPassword2" className="sr-only">متن</label>
-              <input type="text" className="form-control" id="inputCommentContent" placeholder="متن"
-                     onChange={(e) => this.handleCommentChange(e)}
-                     value={this.state.commentContent}/>
+              <textarea className="form-control" id="inputCommentContent" placeholder="متن"
+                        onChange={(e) => this.handleCommentChange(e)}
+                        value={this.state.commentContent}></textarea>
             </div>
             <button type="submit" className="btn btn-primary mb-2">ثبت کامنت جدید</button>
           </form>
-          {meeting.comments.map((comment: CommentModel, index: number) => (
-            <CommentItem comment={comment}/>
-          ))}
+          <div className="list-group mt-3">
+            {meeting.comments.map((comment: CommentModel, index: number) => (
+              <CommentItem comment={comment}/>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   }
 
-  handleCommentChange(e: React.ChangeEvent<HTMLInputElement>) {
+  handleCommentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     this.setState({...this.state, commentContent: e.target.value});
   }
 

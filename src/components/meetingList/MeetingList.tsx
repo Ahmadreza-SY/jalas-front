@@ -1,9 +1,8 @@
 import React, {Component} from "react";
-import {Link, Redirect} from "react-router-dom";
+import {Redirect} from "react-router-dom";
 import MeetingItem from "./MeetingItem";
 import {Meeting} from "../../api/models/MeetingModels";
 import Api from "../../api/Api";
-import Header from "../common/Header";
 import {User} from "../../api/models/UserModels";
 
 export default class MeetingList extends Component<Props, State> {
@@ -52,36 +51,41 @@ export default class MeetingList extends Component<Props, State> {
       return <Redirect to={this.state.redirectLink}/>;
     return (
       <div>
-        <Link to="/meeting/new">
-          <button>Create New Poll</button>
-        </Link>
-        <hr/>
-        <br/>
-        <label>
-          <input
-            type="checkbox"
-            className="form-control"
-            defaultChecked={this.state.myPolls}
-            onChange={() =>
-              this.filterPolls()
-            }
-          />
-          جلسات من
-        </label>
-        <ul>
-          {this.state.meetings.map(
-            (meeting: Meeting, index: number) => (
-              <li key={index}>
-                <MeetingItem
-                  id={meeting.id}
-                  title={meeting.title}
-                  state={meeting.status}
-                />
-                <hr/>
-              </li>
-            )
-          )}
-        </ul>
+        <div className="card text-white bg-dark">
+          <div className="card-header">
+            <div className="row align-items-center">
+              <h3 className="mb-0 col">جلسات من</h3>
+              <div className="col-auto">
+								<div className="form-check">
+									<input
+										type="checkbox"
+										className="form-check-input"
+										defaultChecked={this.state.myPolls}
+										onChange={() => this.filterPolls()}
+										id="defaultCheck1"
+									/>
+										<label className="form-check-label" htmlFor="defaultCheck1">
+											نمایش نظرسنجی‌های من
+										</label>
+								</div>
+
+              </div>
+            </div>
+          </div>
+          <div className="card-body">
+            <ul className="list-group">
+              {this.state.meetings.map(
+                (meeting: Meeting, index: number) => (
+                  <MeetingItem key={index}
+                               id={meeting.id}
+                               title={meeting.title}
+                               state={meeting.status}
+                  />
+                )
+              )}
+            </ul>
+          </div>
+        </div>
       </div>
     );
   }

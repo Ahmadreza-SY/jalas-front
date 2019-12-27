@@ -10,11 +10,11 @@ export default class CommentItem extends Component<Props, State> {
 
   render() {
     let comment = this.props.comment;
-    return <div className="col-sm-8 col-sm-offset-2">
+    return <div className="list-group-item list-group-item-dark">
       <div className="panel panel-default">
-        <div className="panel-heading">
-          <strong>{comment.owner}</strong>
-          <span className="text-muted">{TimeUtils.getFromNowDuration(comment.creationDate)}</span>
+        <div className="row">
+          <strong className="col">{comment.owner}</strong>
+          <span className="col-auto text-muted">{TimeUtils.getFromNowDuration(comment.creationDate)}</span>
         </div>
         <div className="panel-body">
           {comment.content}
