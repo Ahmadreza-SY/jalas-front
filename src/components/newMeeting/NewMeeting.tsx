@@ -24,7 +24,12 @@ export default class NewMeeting extends Component<Props, State> {
   }
 
   componentDidMount() {
-    Api.profile().then(response => this.setState({user: response.data}))
+    Api.profile().then(response => {
+      let redirectLink = undefined;
+      if (response.data.isAdmin)
+        redirectLink = `/report`;
+      this.setState({user: response.data, redirectLink})
+    });
   }
 
   addSlot() {

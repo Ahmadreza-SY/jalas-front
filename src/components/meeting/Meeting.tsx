@@ -1,4 +1,4 @@
-import React, {Component, FormEvent, ChangeEvent} from 'react';
+import React, {ChangeEvent, Component, FormEvent} from 'react';
 import Api from '../../api/Api';
 import {CommentModel, Meeting, MeetingPoll, MeetingStatus, TimeRange} from '../../api/models/MeetingModels';
 import ReservableTimeSlotComponent from '../timeSlot/ReservableTimeSlot';
@@ -8,6 +8,7 @@ import CommentItem from './CommentItem';
 import ToastUtils from "../../utils/ToastUtils";
 import Header from "../common/Header";
 import {User} from '../../api/models/UserModels';
+import {Redirect} from "react-router-dom";
 
 
 export default class MeetingComponent extends Component<Props, State> {
@@ -17,16 +18,22 @@ export default class MeetingComponent extends Component<Props, State> {
       meeting: undefined,
       selectedTimeSlot: undefined,
       pageEntryTime: new Date(),
-	  commentContent: "",
-	  newSlotStart: 0,
-	  newSlotEnd: 0,
-	  user: undefined
+      commentContent: "",
+      newSlotStart: 0,
+      newSlotEnd: 0,
+      user: undefined,
+      redirectLink: undefined
     };
   }
 
   componentDidMount(): void {
     this.getMeeting();
-    Api.profile().then(response => this.setState({user: response.data}))
+    Api.profile().then(response => {
+      let redirectLink = undefined;
+      if (response.data.isAdmin)
+        redirectLink = `/report`;
+      this.setState({user: response.data, redirectLink})
+    })
   }
 
   componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
@@ -65,7 +72,7 @@ export default class MeetingComponent extends Component<Props, State> {
   updateStart(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.value)
       return;
-	const date = new Date(e.target.value);
+    const date = new Date(e.target.value);
     this.setState({...this.state, newSlotStart: date.getTime()})
   }
 
@@ -77,34 +84,36 @@ export default class MeetingComponent extends Component<Props, State> {
   }
 
   updateMeeting() {
-	if (this.state.newSlotStart == 0 || this.state.newSlotEnd == 0) {
-	  ToastUtils.error("No slot entered!");
-	  return
-	}
-	Api.updateMeeting(
-		this.props.match.params.meetingId,
-		new TimeRange(this.state.newSlotStart, this.state.newSlotEnd)
-	)
-		.then(response => {
-			let meeting = response.data;
-			this.setState({ meeting });
-			ToastUtils.success("New slot added successfully");
-		})
+    if (this.state.newSlotStart == 0 || this.state.newSlotEnd == 0) {
+      ToastUtils.error("No slot entered!");
+      return
+    }
+    Api.updateMeeting(
+      this.props.match.params.meetingId,
+      new TimeRange(this.state.newSlotStart, this.state.newSlotEnd)
+    )
+      .then(response => {
+        let meeting = response.data;
+        this.setState({meeting});
+        ToastUtils.success("New slot added successfully");
+      })
   }
 
   render() {
-	let meeting = this.state.meeting;
-	let addtionalOptionForm = (
-		<div>
-			شروع
-			<input className="form-control" onChange={e => this.updateStart(e)} type="datetime-local" />
-			پایان
-			<input className="form-control" onChange={e => this.updateEnd(e)} type="datetime-local" />
-			<button className="btn btn-success" onClick={() => this.updateMeeting()}>
-				ثبت زمان جدید
-			</button>
-		</div>
-	);
+    let meeting = this.state.meeting;
+    let additionalOptionForm = (
+      <div>
+        شروع
+        <input className="form-control" onChange={e => this.updateStart(e)} type="datetime-local"/>
+        پایان
+        <input className="form-control" onChange={e => this.updateEnd(e)} type="datetime-local"/>
+        <button className="btn btn-success" onClick={() => this.updateMeeting()}>
+          ثبت زمان جدید
+        </button>
+      </div>
+    );
+    if (this.state.redirectLink !== undefined)
+      return <Redirect to={this.state.redirectLink}/>;
     if (!meeting)
       return <div className="spinner-border"/>;
     return <div>
@@ -139,7 +148,7 @@ export default class MeetingComponent extends Component<Props, State> {
       )}
       {meeting.status === MeetingStatus.PENDING &&
       <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
-	  {meeting.status === MeetingStatus.ELECTING ? addtionalOptionForm : null}
+      {meeting.status === MeetingStatus.ELECTING ? additionalOptionForm : null}
       <div>
         <h4>Comments</h4>
         <div>
@@ -184,7 +193,8 @@ interface State {
   commentContent: string,
   newSlotStart: number,
   newSlotEnd: number,
-  user: User | undefined
+  user: User | undefined,
+  redirectLink: string | undefined
 }
 
 interface MatchParams {
