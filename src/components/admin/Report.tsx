@@ -7,7 +7,6 @@ import {GeneralReport} from "../../api/models/StatModels";
 import ToastUtils from "../../utils/ToastUtils";
 import "./Report.css";
 import TimeUtils from "../../utils/TimeUtils";
-import Header from '../common/Header';
 
 export default class Report extends Component<Props, State> {
 
@@ -43,25 +42,26 @@ export default class Report extends Component<Props, State> {
       return <div className="spinner-border"/>;
 
     return <div>
-      <Header user={this.state.user}/>
-      <div className="card">
+      <div className="card text-white bg-dark">
         <div className="card-header">
           Quality in Use
         </div>
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">
-            جلسه‌های لغو شده
-            <span className="badge badge-light">{report.canceledMeetingsCount}</span>
-          </li>
-          <li className="list-group-item">
-            میانگین زمان نهایی کردن جلسه
-            <span className="badge badge-light">{TimeUtils.getDuration(0, report.reservationTimeAvg)}</span>
-          </li>
-          <li className="list-group-item">
-            تعداد اتاق‌های رزرو شده
-            <span className="badge badge-light">{report.reservedRoomsCount}</span>
-          </li>
-        </ul>
+        <div className="card-body">
+          <ul className="list-group">
+            <li className="list-group-item list-group-item-dark">
+              جلسه‌های لغو شده
+              <span className="badge badge-light ml-2">{report.canceledMeetingsCount}</span>
+            </li>
+            <li className="list-group-item list-group-item-dark">
+              میانگین زمان نهایی کردن جلسه
+              <span className="badge badge-light ml-2">{TimeUtils.getDuration(0, report.reservationTimeAvg)}</span>
+            </li>
+            <li className="list-group-item list-group-item-dark">
+              تعداد اتاق‌های رزرو شده
+              <span className="badge badge-light ml-2">{report.reservedRoomsCount}</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   }
