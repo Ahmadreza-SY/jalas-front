@@ -6,7 +6,6 @@ import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 import {RouteComponentProps} from 'react-router';
 import CommentItem from './CommentItem';
 import ToastUtils from "../../utils/ToastUtils";
-import Header from "../common/Header";
 import {User} from '../../api/models/UserModels';
 import {Redirect} from "react-router-dom";
 
@@ -117,7 +116,6 @@ export default class MeetingComponent extends Component<Props, State> {
     if (!meeting)
       return <div className="spinner-border"/>;
     return <div>
-      <Header user={this.state.user}/>
       <h1>
         {meeting.title}
       </h1>

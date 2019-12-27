@@ -5,7 +5,6 @@ import Api from '../../api/Api';
 import {RouteComponentProps} from 'react-router';
 import {Redirect} from 'react-router-dom';
 import {User} from '../../api/models/UserModels';
-import Header from '../common/Header';
 
 export default class NewMeeting extends Component<Props, State> {
 
@@ -86,40 +85,58 @@ export default class NewMeeting extends Component<Props, State> {
   }
 
   showSlots() {
-    return <div>
-      <Header user={this.state.user}/>
-      {this.state.slots.map((slot: TimeRange, index: number) => (
-        <div key={index}>
-          <p>Start: {TimeUtils.getDateTimeFormat(slot.start, false)}</p>
-          <p>End: {TimeUtils.getDateTimeFormat(slot.end, false)}</p>
-          <button onClick={() => this.deleteSlot(index)}>Delete</button>
-          <hr/>
+    return <div className="card text-white bg-dark">
+      <div className="card-header"><h5>Slots</h5></div>
+      <div className="card-body">
+        {this.state.slots.map((slot: TimeRange, index: number) => (
+          <div className="row" key={index}>
+            <p className="col">Start: {TimeUtils.getDateTimeFormat(slot.start, false)}</p>
+            <p className="col">End: {TimeUtils.getDateTimeFormat(slot.end, false)}</p>
+            <div className="col-auto">
+              <button onClick={() => this.deleteSlot(index)}>Delete</button>
+            </div>
+            <hr/>
+          </div>
+        ))}
+        <div className="row align-items-end">
+          <div className="col"><span>Start</span>
+            <input className="form-control" onChange={(e) => this.updateStart(e)} type="datetime-local"/>
+          </div>
+          <div className="col"><span> End </span>
+            <input className="form-control" onChange={(e) => this.updateEnd(e)} type="datetime-local"/></div>
+          <div className="col-auto">
+            <button className="btn btn-primary" onClick={() => this.addSlot()}>Add</button>
+          </div>
         </div>
-      ))}
-      <label>
-        Slots
-        Start
-        <input className="form-control" onChange={(e) => this.updateStart(e)} type="datetime-local"/>
-        End
-        <input className="form-control" onChange={(e) => this.updateEnd(e)} type="datetime-local"/>
-        <button className="btn btn-primary" onClick={() => this.addSlot()}>Add</button>
-      </label>
+      </div>
     </div>
   }
 
   showGuests() {
-    return <div>
-      <label>Guests</label>
-      {this.state.guests.map((guest: string, index: number) => (
-          <div key={index}>
-            <span>{guest}</span>
-            <button onClick={() => this.deleteGuest(index)}>Delete</button>
+    return <div className="card text-white bg-dark">
+      <div className="card-header"><h5>Guests</h5></div>
+      <div className="card-body">
+        <div className="row mb-3">
+          {this.state.guests.map((guest: string, index: number) => (
+              <div className="col-auto mb-2" key={index}>
+                <span className="mr-1">{guest}</span>
+                <button onClick={() => this.deleteGuest(index)}>Delete</button>
+              </div>
+            )
+          )}
+        </div>
+        <div className="row">
+          <div className="col">
+            <input className="form-control" onChange={(e) => this.updateEmail(e)} type="email"
+                   placeholder="Invitee Email"/>
           </div>
-        )
-      )}
-      <input className="form-control" onChange={(e) => this.updateEmail(e)} type="email"/>
-      <button className="btn btn-primary" onClick={() => this.addEmail()}> Add</button>
+          <div className="col">
+            <button className="btn btn-primary" onClick={() => this.addEmail()}> Add</button>
+          </div>
+        </div>
+      </div>
     </div>
+
   }
 
   createMeeting() {
@@ -133,14 +150,21 @@ export default class NewMeeting extends Component<Props, State> {
   render() {
     if (this.state.redirectLink !== undefined)
       return <Redirect to={this.state.redirectLink}/>;
-    return <div className="row">
-      <label className="col-md-12">
-        Title:
-        <input className="form-control" onChange={(e) => this.updateTitle(e)} type="text"/>
+    return <div className="row text-left">
+      <label className="col-12">
+        <div className="card text-white bg-dark">
+          <div className="card-header"><h5>Title</h5></div>
+          <div className="card-body">
+            <input className="form-control" onChange={(e) => this.updateTitle(e)} type="text"/>
+          </div>
+        </div>
       </label>
-      {this.showSlots()}
-      {this.showGuests()}
-      <input className="btn btn-success" onClick={() => this.createMeeting()} type="submit" value="Submit"/>
+      <div className="col-12 mb-3">{this.showSlots()}</div>
+      <div className="col-12 mb-3">{this.showGuests()}</div>
+      <div className="col-12">
+        <input className="btn btn-success" onClick={() => this.createMeeting()} type="submit"
+               value="Submit"/>
+      </div>
     </div>
 
   }

@@ -52,7 +52,6 @@ export default class MeetingList extends Component<Props, State> {
       return <Redirect to={this.state.redirectLink}/>;
     return (
       <div>
-        <Header user={this.state.user}/>
         <Link to="/meeting/new">
           <button>Create New Poll</button>
         </Link>

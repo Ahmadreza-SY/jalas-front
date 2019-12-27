@@ -38,7 +38,7 @@ class ApiClass {
   }
 
   getPolls() {
-	  return this.axiosInstance.get<Meeting[]>(`/meeting/poll`)
+    return this.axiosInstance.get<Meeting[]>(`/meeting/poll`)
   }
 
   getMeeting(id: string) {
@@ -46,7 +46,7 @@ class ApiClass {
   }
 
   updateMeeting(id: string, newSlot: TimeRange) {
-	return this.axiosInstance.put(`/meeting/${id}`, {newSlots: [newSlot]})
+    return this.axiosInstance.put(`/meeting/${id}`, {newSlots: [newSlot]})
   }
 
   getAvailableRooms(start: number, end: number) {
