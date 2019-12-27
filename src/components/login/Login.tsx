@@ -35,7 +35,7 @@ export default class Login extends Component<Props, State> {
   }
 
   render() {
-    if (this.state.redirectLink !== undefined)
+    if (this.state.redirectLink)
       return <Redirect to={this.state.redirectLink}/>;
     return <form onSubmit={(e) => this.handleLogin(e)}>
       <div className="form-group">

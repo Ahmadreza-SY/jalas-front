@@ -4,8 +4,10 @@ import ToastUtils from '../../utils/ToastUtils';
 import Api from '../../api/Api';
 import {User} from '../../api/models/UserModels';
 import Header from './Header';
+import { withRouter, RouteComponentProps } from "react-router";
 
-export default class Nav extends Component<Props, State> {
+class Nav extends Component<Props, State> {
+	historyListener: any;
 
   constructor(props: Props) {
     super(props);
@@ -13,9 +15,17 @@ export default class Nav extends Component<Props, State> {
   }
 
   componentDidMount(): void {
-    Api.profile().then(response => {
-      this.setState({user: response.data})
-    })
+	  this.props.history.listen(data => {
+		  this.getUserInfo()
+	  })
+	  this.getUserInfo()
+  }
+
+  getUserInfo() {
+	  if (!localStorage.getItem("token")) return;
+		Api.profile().then(response => {
+			this.setState({ user: response.data });
+		});
   }
 
   logout() {
@@ -45,11 +55,12 @@ export default class Nav extends Component<Props, State> {
 }
 
 
-interface Props {
+interface Props extends RouteComponentProps {
 }
-
 interface State {
 
   user: User | undefined,
   redirect: boolean
 }
+
+export default withRouter(Nav);

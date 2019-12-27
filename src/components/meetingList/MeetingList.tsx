@@ -42,7 +42,8 @@ export default class MeetingList extends Component<Props, State> {
         this.setState({myPolls: myPollsChecked, meetings: response.data});
       })
     } else {
-      this.getMeetings()
+	  this.getMeetings()
+	  this.setState({ myPolls: myPollsChecked });
     }
   }
 
