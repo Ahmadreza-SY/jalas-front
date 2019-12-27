@@ -37,8 +37,7 @@ class ApiClass {
   }
 
   getPolls() {
-	  // TODO change endpoint to meetings
-	  return this.axiosInstance.get<Meeting[]>(`/meeting`)
+	  return this.axiosInstance.get<Meeting[]>(`/meeting/poll`)
   }
 
   getMeeting(id: string) {
