@@ -40,6 +40,8 @@ export default class NewMeeting extends Component<Props, State> {
   }
 
   addEmail() {
+    if (this.state.email.trim() === "")
+      return;
     const guests = this.state.guests;
     guests.push(this.state.email);
     this.setState({...this.state, guests})
