@@ -81,6 +81,8 @@ export default class MeetingList extends Component<Props, State> {
                                id={meeting.id}
                                title={meeting.title}
                                state={meeting.status}
+                               p={this.state.myPolls}
+                               user={this.state.user}
                   />
                 )
               )}
