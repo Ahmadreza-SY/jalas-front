@@ -48,7 +48,8 @@ export class CommentModel {
     public id: string,
     public owner: string,
     public content: string,
-    public creationDate: number
+    public creationDate: number,
+    public replies: CommentModel[]
   ) {
   }
 }

@@ -187,7 +187,7 @@ export default class MeetingComponent extends Component<Props, State> {
           </form>
           <div className="list-group mt-3">
             {meeting.comments.map((comment: CommentModel, index: number) => (
-              <CommentItem comment={comment}/>
+              <CommentItem key={index} parentComment={comment} comment={comment}/>
             ))}
           </div>
         </div>
