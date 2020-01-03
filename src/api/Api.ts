@@ -86,6 +86,10 @@ class ApiClass {
     return this.axiosInstance.post(`/meeting/${meetingId}/comment`, {content})
   }
 
+  updateCommentForMeeting(meetingId: string, comment: CommentModel): AxiosPromise<CommentModel> {
+    return this.axiosInstance.put(`/meeting/${meetingId}/comment`, comment)
+  }
+
   login(username: string, password: string): AxiosPromise<LoginResponse> {
     return this.axiosInstance.post(`/auth/login`, {username, password})
   }

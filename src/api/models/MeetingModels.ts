@@ -45,11 +45,12 @@ export enum VoteOption {
 
 export class CommentModel {
   constructor(
-    public id: string,
-    public owner: string,
+    public id: string | undefined,
+    public owner: string | undefined,
     public content: string,
     public creationDate: number,
-    public replies: CommentModel[]
+    public replies: CommentModel[],
+    public meetingId: string
   ) {
   }
 }

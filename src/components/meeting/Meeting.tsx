@@ -181,13 +181,14 @@ export default class MeetingComponent extends Component<Props, State> {
               <label htmlFor="inputPassword2" className="sr-only">متن</label>
               <textarea className="form-control" id="inputCommentContent" placeholder="متن"
                         onChange={(e) => this.handleCommentChange(e)}
-                        value={this.state.commentContent}></textarea>
+                        value={this.state.commentContent}/>
             </div>
             <button type="submit" className="btn btn-primary mb-2">ثبت کامنت جدید</button>
           </form>
           <div className="list-group mt-3">
             {meeting.comments.map((comment: CommentModel, index: number) => (
-              <CommentItem key={index} parentComment={comment} comment={comment}/>
+              <CommentItem key={index} parentComment={comment} comment={comment}
+                           updateCallback={(cm) => this.commentUpdate(cm)}/>
             ))}
           </div>
         </div>
@@ -209,6 +210,18 @@ export default class MeetingComponent extends Component<Props, State> {
         this.setState({meeting, commentContent});
         ToastUtils.success("Comment added successfully");
       })
+  }
+
+  commentUpdate(newComment: CommentModel) {
+    const meeting = this.state.meeting;
+    meeting!!.comments = meeting!!.comments.map(comment => {
+      if (comment.id === newComment.id) {
+        return newComment;
+      } else {
+        return comment;
+      }
+    });
+    this.setState({meeting})
   }
 }
 
