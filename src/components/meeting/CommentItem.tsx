@@ -7,12 +7,12 @@ import Api from '../../api/Api';
 export default class CommentItem extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {showReplyBox: false, replyContent: ""}
+    this.state = {showReplyBox: false, replyContent: "", isEditing: false}
   }
 
   showReplyBox() {
     return <div className={"reply-text-container"}>
-    <textarea disabled={!this.state.showReplyBox}
+    <textarea disabled={!this.state.showReplyBox && !this.state.isEditing}
               className="form-control"
               id="inputCommentContent"
               placeholder="متن"
@@ -37,15 +37,27 @@ export default class CommentItem extends Component<Props, State> {
     })
   }
 
+  getUser() {
+    return JSON.parse(localStorage.getItem("user")!!);
+  }
+
+  updateCommentContent(comment: CommentModel) {
+    comment.content = this.state.replyContent;
+  }
+
   addReply() {
-    let user = JSON.parse(localStorage.getItem("user")!!);
-    this.addReplyToParent(
-      this.props.comment.id!!,
-      new CommentModel(undefined, user.email, this.state.replyContent, new Date().getTime(), [], this.props.parentComment.meetingId),
-      this.props.parentComment
-    );
+    let user = this.getUser();
+    if (this.state.isEditing) {
+      this.updateCommentContent(this.props.comment)
+    } else {
+      this.addReplyToParent(
+        this.props.comment.id!!,
+        new CommentModel(undefined, user.email, this.state.replyContent, new Date().getTime(), [], this.props.parentComment.meetingId),
+        this.props.parentComment
+      );
+    }
     this.updateComment(this.props.parentComment);
-    this.setState({showReplyBox: false, replyContent: ''})
+    this.setState({showReplyBox: false, isEditing: false, replyContent: ''})
   }
 
   updateComment(parentComment: CommentModel) {
@@ -61,6 +73,14 @@ export default class CommentItem extends Component<Props, State> {
     this.setState({showReplyBox: !this.state.showReplyBox})
   }
 
+  editComment() {
+    this.setState({
+      isEditing: !this.state.isEditing,
+      replyContent: this.props.comment.content
+    })
+
+  }
+
 
   render() {
     let comment = this.props.comment;
@@ -71,13 +91,17 @@ export default class CommentItem extends Component<Props, State> {
           <span className="col-auto text-muted">{TimeUtils.getFromNowDuration(comment.creationDate)}</span>
           <button onClick={() => this.toggleShowReplyBox()} className="btn btn-info"><i className="fas fa-reply"/>
           </button>
-          {/*<button className="btn btn-info"><i className="fas fa-edit"/></button>*/}
-          {/*<button className="btn btn-info"><i className="fas fa-trash"/></button>*/}
+          {this.props.comment.owner === this.getUser().email &&
+          <button onClick={() => this.editComment()} className="btn btn-info"><i className="fas fa-edit"/></button>}
+          {/*{this.props.comment.owner === this.getUser().email &&*/}
+          {/*<button className="btn btn-danger"><i className="fas fa-trash"/></button>}*/}
         </div>
+        {!this.state.isEditing &&
         <div className="panel-body">
           {comment.content}
         </div>
-        {this.state.showReplyBox && this.showReplyBox()}
+        }
+        {(this.state.showReplyBox || this.state.isEditing) && this.showReplyBox()}
         {this.props.comment.replies.map((reply: CommentModel, index: number) =>
           <CommentItem updateCallback={this.props.updateCallback} key={reply.id}
                        parentComment={this.props.parentComment} comment={reply}/>
@@ -90,6 +114,7 @@ export default class CommentItem extends Component<Props, State> {
 interface State {
   showReplyBox: boolean
   replyContent: string
+  isEditing: boolean
 }
 
 interface Props {
