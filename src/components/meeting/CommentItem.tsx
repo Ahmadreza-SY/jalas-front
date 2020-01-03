@@ -41,8 +41,19 @@ export default class CommentItem extends Component<Props, State> {
     return JSON.parse(localStorage.getItem("user")!!);
   }
 
-  updateCommentContent(comment: CommentModel) {
-    comment.content = this.state.replyContent;
+  updateCommentContent(currentComment: CommentModel) {
+    currentComment.content = this.state.replyContent;
+  }
+
+  deleteReply(reply: CommentModel, currentComment: CommentModel) {
+    const foundReply = currentComment.replies.find(r => r.id === reply.id);
+    if (foundReply) {
+      currentComment.replies = currentComment.replies.filter(r => r.id !== reply.id)
+      this.updateComment(this.props.parentComment)
+    } else {
+      currentComment.replies.forEach(r => this.deleteReply(reply, r))
+    }
+
   }
 
   addReply() {
@@ -78,7 +89,20 @@ export default class CommentItem extends Component<Props, State> {
       isEditing: !this.state.isEditing,
       replyContent: this.props.comment.content
     })
+  }
 
+  deleteComment() {
+    if (this.props.comment.id === this.props.parentComment.id) {
+      Api.deleteComment(this.props.comment.id!!).then(
+        response => {
+          if (this.props.deleteCallback)
+            this.props.deleteCallback()
+        }
+      )
+
+    } else {
+      this.deleteReply(this.props.comment, this.props.parentComment)
+    }
   }
 
 
@@ -93,8 +117,9 @@ export default class CommentItem extends Component<Props, State> {
           </button>
           {this.props.comment.owner === this.getUser().email &&
           <button onClick={() => this.editComment()} className="btn btn-info"><i className="fas fa-edit"/></button>}
-          {/*{this.props.comment.owner === this.getUser().email &&*/}
-          {/*<button className="btn btn-danger"><i className="fas fa-trash"/></button>}*/}
+          {this.props.comment.owner === this.getUser().email &&
+          <button onClick={() => this.deleteComment()} className="btn btn-danger"><i className="fas fa-trash"/>
+          </button>}
         </div>
         {!this.state.isEditing &&
         <div className="panel-body">
@@ -104,7 +129,9 @@ export default class CommentItem extends Component<Props, State> {
         {(this.state.showReplyBox || this.state.isEditing) && this.showReplyBox()}
         {this.props.comment.replies.map((reply: CommentModel, index: number) =>
           <CommentItem updateCallback={this.props.updateCallback} key={reply.id}
-                       parentComment={this.props.parentComment} comment={reply}/>
+                       parentComment={this.props.parentComment} comment={reply}
+                       deleteCallback={null}
+          />
         )}
       </div>
     </div>;
@@ -121,4 +148,5 @@ interface Props {
   parentComment: CommentModel
   comment: CommentModel,
   updateCallback: (cm: CommentModel) => void
+  deleteCallback: (() => void) | null
 }

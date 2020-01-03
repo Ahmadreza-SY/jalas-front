@@ -101,6 +101,10 @@ class ApiClass {
   report(): AxiosPromise<GeneralReport> {
     return this.axiosInstance.get(`/report`)
   }
+
+  deleteComment(commentId: string) {
+    return this.axiosInstance.delete(`/meeting/comment/${commentId}`)
+  }
 }
 
 const Api = new ApiClass();

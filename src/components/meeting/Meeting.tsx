@@ -188,7 +188,9 @@ export default class MeetingComponent extends Component<Props, State> {
           <div className="list-group mt-3">
             {meeting.comments.map((comment: CommentModel, index: number) => (
               <CommentItem key={index} parentComment={comment} comment={comment}
-                           updateCallback={(cm) => this.commentUpdate(cm)}/>
+                           updateCallback={(cm) => this.commentUpdate(cm)}
+                           deleteCallback={() => this.deleteComment(comment)}
+              />
             ))}
           </div>
         </div>
@@ -221,6 +223,12 @@ export default class MeetingComponent extends Component<Props, State> {
         return comment;
       }
     });
+    this.setState({meeting})
+  }
+
+  private deleteComment(deletedComment: CommentModel) {
+    const meeting = this.state.meeting;
+    meeting!!.comments = meeting!!.comments.filter(comment => comment.id !== deletedComment.id);
     this.setState({meeting})
   }
 }
