@@ -23,6 +23,7 @@ class Nav extends Component<Props, State> {
     if (!localStorage.getItem("token")) return;
     Api.profile().then(response => {
       this.setState({user: response.data});
+      localStorage.setItem("user", JSON.stringify(response.data))
     });
   }
 

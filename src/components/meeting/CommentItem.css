@@ -1,6 +1,11 @@
 .thumbnail {
     padding: 0px;
 }
+
 .form-inline {
     margin-bottom: 15px;
+}
+
+.reply-text-container {
+    display: flex
 }
