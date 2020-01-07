@@ -45,7 +45,7 @@ export default class NewMeeting extends Component<Props, State> {
       return;
     const guests = this.state.guests;
     guests.push(this.state.email);
-    this.setState({...this.state, guests})
+    this.setState({...this.state, guests, email: ""})
   }
 
   updateStart(e: ChangeEvent<HTMLInputElement>) {
@@ -129,7 +129,9 @@ export default class NewMeeting extends Component<Props, State> {
           {this.state.guests.map((guest: string, index: number) => (
               <div className="col-auto mb-2" key={index}>
                 <span className="mr-1">{guest}</span>
-                <button onClick={() => this.deleteGuest(index)}>Delete</button>
+                <button className="btn btn-danger" onClick={() => this.deleteGuest(index)}>
+                  <i className="fas fa-trash"/>
+                </button>
               </div>
             )
           )}
@@ -137,7 +139,7 @@ export default class NewMeeting extends Component<Props, State> {
         <div className="row">
           <div className="col">
             <input className="form-control" onChange={(e) => this.updateEmail(e)} type="email"
-                   placeholder="Invitee Email"/>
+                   placeholder="Invitee Email" value={this.state.email}/>
           </div>
           <div className="col">
             <button className="btn btn-primary" onClick={() => this.addEmail()}> Add</button>

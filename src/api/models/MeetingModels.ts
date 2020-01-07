@@ -59,7 +59,7 @@ export class CommentModel {
 export type StateToCssClassMap = Record<string, string>;
 export let StateClassMap: StateToCssClassMap = {
   "ELECTING": "dark",
-  "PENDING": "Secondary",
+  "PENDING": "secondary",
   "RESERVED": "success",
   "CANCELED": "danger",
   "CLOSED": "warning"
