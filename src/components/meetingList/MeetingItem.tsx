@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import {User} from "../../api/models/UserModels";
-import {MeetingStatus} from "../../api/models/MeetingModels";
+import {MeetingStatus, StateClassMap} from "../../api/models/MeetingModels";
 
 export default class MeetingItem extends Component<Props, State> {
   constructor(props: Props) {
@@ -14,14 +14,6 @@ export default class MeetingItem extends Component<Props, State> {
   }
 
   render() {
-    type StateToCssClassMap = Record<string, string>;
-    let stateClassMap: StateToCssClassMap = {
-      "ELECTING": "dark",
-      "PENDING": "Secondary",
-      "RESERVED": "success",
-      "CANCELED": "danger",
-      "CLOSED": "warning"
-    };
     return (
       <Link
         to={"/meeting/" + this.props.id + ((this.props.user && !this.props.p && this.props.state === MeetingStatus.ELECTING) ? ("/vote/" + this.props.user!!.email) : "")}
@@ -31,7 +23,7 @@ export default class MeetingItem extends Component<Props, State> {
 					<span className="">
 						{this.props.title}
 					</span>
-            <span className={`badge badge-${stateClassMap[this.props.state]} ml-3`}>
+            <span className={`badge badge-${StateClassMap[this.props.state]} ml-3`}>
 						{this.props.state}
 					</span>
           </div>

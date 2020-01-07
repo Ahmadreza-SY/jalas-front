@@ -1,6 +1,13 @@
 import React, {ChangeEvent, Component, FormEvent} from 'react';
 import Api from '../../api/Api';
-import {CommentModel, Meeting, MeetingPoll, MeetingStatus, TimeRange} from '../../api/models/MeetingModels';
+import {
+  CommentModel,
+  Meeting,
+  MeetingPoll,
+  MeetingStatus,
+  StateClassMap,
+  TimeRange
+} from '../../api/models/MeetingModels';
 import ReservableTimeSlotComponent from '../timeSlot/ReservableTimeSlot';
 import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 import {RouteComponentProps} from 'react-router';
@@ -165,7 +172,7 @@ export default class MeetingComponent extends Component<Props, State> {
           <div className="row">
             <div className="col">
               <input className="form-control" onChange={(e) => this.updateGuestEmail(e)}
-                     type="email" placeholder="ایمیل مهمان" value={this.state.guestEmail} />
+                     type="email" placeholder="ایمیل مهمان" value={this.state.guestEmail}/>
             </div>
             <div className="col">
               <button className="btn btn-primary" onClick={() => this.addGuest()}>دعوت از مهمان</button>
@@ -185,7 +192,7 @@ export default class MeetingComponent extends Component<Props, State> {
             <div className="col">
               <h1 className="mb-0">
                 {meeting.title}
-                <span className="badge badge-dark ml-2">{meeting.status}</span>
+                <span className={`badge badge-${StateClassMap[meeting.status]} ml-3`}>{meeting.status}</span>
               </h1></div>
             <div className="col-auto">
               {meeting.status === MeetingStatus.PENDING &&
@@ -220,9 +227,12 @@ export default class MeetingComponent extends Component<Props, State> {
                 </li>
               ))}
             </ul>
-          ) : (
-            <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
-          )}
+          ) : [
+            (meeting.status === MeetingStatus.PENDING || meeting.status === MeetingStatus.RESERVED) ?
+              <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
+              :
+              <p>No option available</p>
+          ]}
 
         </div>
       </div>
