@@ -1,13 +1,13 @@
-import React, {ChangeEvent, Component, FormEvent} from 'react';
+import React, { ChangeEvent, Component, FormEvent } from 'react';
 import Api from '../../api/Api';
-import {CommentModel, Meeting, MeetingPoll, MeetingStatus, TimeRange} from '../../api/models/MeetingModels';
+import { CommentModel, Meeting, MeetingPoll, MeetingStatus, TimeRange } from '../../api/models/MeetingModels';
 import ReservableTimeSlotComponent from '../timeSlot/ReservableTimeSlot';
 import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
-import {RouteComponentProps} from 'react-router';
+import { RouteComponentProps } from 'react-router';
 import CommentItem from './CommentItem';
 import ToastUtils from "../../utils/ToastUtils";
-import {User} from '../../api/models/UserModels';
-import {Redirect} from "react-router-dom";
+import { User } from '../../api/models/UserModels';
+import { Redirect } from "react-router-dom";
 
 
 export default class MeetingComponent extends Component<Props, State> {
@@ -31,7 +31,7 @@ export default class MeetingComponent extends Component<Props, State> {
       let redirectLink = undefined;
       if (response.data.isAdmin)
         redirectLink = `/report`;
-      this.setState({user: response.data, redirectLink})
+      this.setState({ user: response.data, redirectLink })
     })
   }
 
@@ -42,16 +42,16 @@ export default class MeetingComponent extends Component<Props, State> {
 
   getMeeting() {
     Api.getMeeting(this.props.match.params.meetingId).then(response => {
-      this.setState({...this.state, meeting: response.data});
+      this.setState({ ...this.state, meeting: response.data });
     })
   }
 
   selectTimeSlot(index: number) {
-    this.setState({...this.state, selectedTimeSlot: index})
+    this.setState({ ...this.state, selectedTimeSlot: index })
   }
 
   clearSelectedTimeSlot() {
-    this.setState({...this.state, selectedTimeSlot: undefined})
+    this.setState({ ...this.state, selectedTimeSlot: undefined })
   }
 
   cancelReservation() {
@@ -59,7 +59,7 @@ export default class MeetingComponent extends Component<Props, State> {
       const meeting = this.state.meeting;
       if (meeting) {
         meeting.status = MeetingStatus.CANCELED;
-        this.setState({...this.state, meeting})
+        this.setState({ ...this.state, meeting })
       }
     })
   }
@@ -72,14 +72,14 @@ export default class MeetingComponent extends Component<Props, State> {
     if (!e.target.value)
       return;
     const date = new Date(e.target.value);
-    this.setState({...this.state, newSlotStart: date.getTime()})
+    this.setState({ ...this.state, newSlotStart: date.getTime() })
   }
 
   updateEnd(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.value)
       return;
     const date = new Date(e.target.value);
-    this.setState({...this.state, newSlotEnd: date.getTime()})
+    this.setState({ ...this.state, newSlotEnd: date.getTime() })
   }
 
   updateMeeting() {
@@ -93,9 +93,16 @@ export default class MeetingComponent extends Component<Props, State> {
     )
       .then(response => {
         let meeting = response.data;
-        this.setState({meeting});
+        this.setState({ meeting });
         ToastUtils.success("New slot added successfully");
       })
+  }
+
+  deleteMeetingSlot(slot: TimeRange) {
+    Api.deleteMeetingSlot(this.props.match.params.meetingId, slot).then(response => {
+      let meeting = response.data;
+      this.setState({ meeting });
+    })
   }
 
   render() {
@@ -107,11 +114,11 @@ export default class MeetingComponent extends Component<Props, State> {
           <div className="form-row">
             <div className="form-group col-md-6">
               <label htmlFor="inputEmail4">شروع</label>
-              <input className="form-control" onChange={e => this.updateStart(e)} type="datetime-local"/>
+              <input className="form-control" onChange={e => this.updateStart(e)} type="datetime-local" />
             </div>
             <div className="form-group col-md-6">
               <label htmlFor="inputPassword4">پایان</label>
-              <input className="form-control" onChange={e => this.updateEnd(e)} type="datetime-local"/>
+              <input className="form-control" onChange={e => this.updateEnd(e)} type="datetime-local" />
             </div>
           </div>
           <button className="btn btn-success" onClick={() => this.updateMeeting()}>
@@ -121,9 +128,9 @@ export default class MeetingComponent extends Component<Props, State> {
       </div>
     );
     if (this.state.redirectLink !== undefined)
-      return <Redirect to={this.state.redirectLink}/>;
+      return <Redirect to={this.state.redirectLink} />;
     if (!meeting)
-      return <div className="spinner-border"/>;
+      return <div className="spinner-border" />;
     return <div>
       <div className="card text-white bg-dark">
         <div className="card-header">
@@ -135,7 +142,7 @@ export default class MeetingComponent extends Component<Props, State> {
               </h1></div>
             <div className="col-auto">
               {meeting.status === MeetingStatus.PENDING &&
-              <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
+                <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
             </div>
           </div>
         </div>
@@ -160,15 +167,20 @@ export default class MeetingComponent extends Component<Props, State> {
                   {
                     this.isOwner() && this.state.selectedTimeSlot !== index &&
                     <div className="mt-2">
-                        <button className="btn btn-primary" onClick={() => this.selectTimeSlot(index)}>انتخاب</button>
+                      <button className="btn btn-primary" onClick={() => this.selectTimeSlot(index)}>انتخاب</button>
                     </div>
+                  }
+                  {
+                    this.props.match.params.email != undefined && (
+                      <button onClick={() => { this.deleteMeetingSlot(slot.time) }} className="btn btn-danger"><i className="fas fa-trash" /></button>
+                    )
                   }
                 </li>
               ))}
             </ul>
           ) : (
-            <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
-          )}
+              <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId} />
+            )}
 
         </div>
       </div>
@@ -180,16 +192,16 @@ export default class MeetingComponent extends Component<Props, State> {
             <div className="form-group">
               <label htmlFor="inputPassword2" className="sr-only">متن</label>
               <textarea className="form-control" id="inputCommentContent" placeholder="متن"
-                        onChange={(e) => this.handleCommentChange(e)}
-                        value={this.state.commentContent}/>
+                onChange={(e) => this.handleCommentChange(e)}
+                value={this.state.commentContent} />
             </div>
             <button type="submit" className="btn btn-primary mb-2">ثبت کامنت جدید</button>
           </form>
           <div className="list-group mt-3">
             {meeting.comments.map((comment: CommentModel, index: number) => (
               <CommentItem key={index} parentComment={comment} comment={comment}
-                           updateCallback={(cm) => this.commentUpdate(cm)}
-                           deleteCallback={() => this.deleteComment(comment)}
+                updateCallback={(cm) => this.commentUpdate(cm)}
+                deleteCallback={() => this.deleteComment(comment)}
               />
             ))}
           </div>
@@ -199,7 +211,7 @@ export default class MeetingComponent extends Component<Props, State> {
   }
 
   handleCommentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    this.setState({...this.state, commentContent: e.target.value});
+    this.setState({ ...this.state, commentContent: e.target.value });
   }
 
   handleAddComment(event: FormEvent<HTMLFormElement>) {
@@ -209,7 +221,7 @@ export default class MeetingComponent extends Component<Props, State> {
         let meeting = this.state.meeting;
         let commentContent = "";
         meeting!!.comments.unshift(response.data);
-        this.setState({meeting, commentContent});
+        this.setState({ meeting, commentContent });
         ToastUtils.success("Comment added successfully");
       })
   }
@@ -223,13 +235,13 @@ export default class MeetingComponent extends Component<Props, State> {
         return comment;
       }
     });
-    this.setState({meeting})
+    this.setState({ meeting })
   }
 
   private deleteComment(deletedComment: CommentModel) {
     const meeting = this.state.meeting;
     meeting!!.comments = meeting!!.comments.filter(comment => comment.id !== deletedComment.id);
-    this.setState({meeting})
+    this.setState({ meeting })
   }
 }
 
