@@ -18,7 +18,8 @@ export default class NewMeeting extends Component<Props, State> {
       end: 0,
       email: '',
       redirectLink: undefined,
-      user: undefined
+      user: undefined,
+      deadline: undefined
     }
   }
 
@@ -61,6 +62,13 @@ export default class NewMeeting extends Component<Props, State> {
     this.setState({...this.state, end: date.getTime()})
   }
 
+  updateDeadline(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.value)
+      return;
+    const date = new Date(e.target.value);
+    this.setState({...this.state, deadline: date.getTime()})
+  }
+
   updateEmail(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.value)
       return;
@@ -72,7 +80,6 @@ export default class NewMeeting extends Component<Props, State> {
       return;
     this.setState({...this.state, title: e.target.value});
   }
-
 
   deleteSlot(index: number) {
     const slots = this.state.slots;
@@ -143,7 +150,7 @@ export default class NewMeeting extends Component<Props, State> {
 
   createMeeting() {
     Api
-      .createMeeting(this.state.title, this.state.slots, this.state.guests)
+      .createMeeting(this.state.title, this.state.slots, this.state.guests, this.state.deadline)
       .then(response => {
         this.setState({redirectLink: `/meeting/${response.data.id}`})
       })
@@ -163,6 +170,15 @@ export default class NewMeeting extends Component<Props, State> {
       </label>
       <div className="col-12 mb-3">{this.showSlots()}</div>
       <div className="col-12 mb-3">{this.showGuests()}</div>
+      <div className="col-12 mb-3">
+        <div className="card text-white bg-dark">
+          <div className="card-header"><h5>Deadline?</h5></div>
+          <div className="card-body">
+            <input className="form-control" onChange={(e) => this.updateDeadline(e)}
+                   type="datetime-local"/>
+          </div>
+        </div>
+      </div>
       <div className="col-12">
         <input className="btn btn-success" onClick={() => this.createMeeting()} type="submit"
                value="Submit"/>
@@ -186,5 +202,6 @@ interface State {
   end: number
   email: string,
   redirectLink: string | undefined,
-  user: User | undefined
+  user: User | undefined,
+  deadline: number | undefined
 }

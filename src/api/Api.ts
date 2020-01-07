@@ -85,9 +85,9 @@ class ApiClass {
     return this.axiosInstance.delete(`/meeting/${meetingId}/reserve`)
   }
 
-  createMeeting(title: string, slots: TimeRange[], guests: string[]) {
+  createMeeting(title: string, slots: TimeRange[], guests: string[], deadline: number | undefined) {
     return this.axiosInstance.post('/meeting', {
-      title, slots, guests
+      title, slots, guests, deadline
     })
   }
 
