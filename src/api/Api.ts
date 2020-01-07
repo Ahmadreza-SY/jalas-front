@@ -49,6 +49,21 @@ class ApiClass {
     return this.axiosInstance.put(`/meeting/${id}`, {newSlots: [newSlot]})
   }
 
+  addMeetingGuest(id: string, guestEmail: string) {
+    return this.axiosInstance.post(`/meeting/${id}/guest`, {guest: guestEmail})
+  }
+
+  deleteMeetingGuest(id: string, guestEmail: string) {
+    return this.axiosInstance.delete(`/meeting/${id}/guest`, {
+      headers: {
+        Authorization: localStorage.getItem("token")
+      },
+      data: {
+        guest: guestEmail
+      }
+    })
+  }
+
   getAvailableRooms(start: number, end: number) {
     return this.axiosInstance.get<AvailableRoomsResponse>('/meeting/available-rooms', {
       params: {

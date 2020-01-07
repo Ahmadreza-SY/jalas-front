@@ -6,6 +6,7 @@ export class Meeting {
     public time: TimeRange,
     public roomId: number,
     public slots: MeetingPoll[],
+    public guests: string[],
     public owner: string,
     public comments: CommentModel[]
   ) {
