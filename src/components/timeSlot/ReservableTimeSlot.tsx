@@ -83,6 +83,9 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
   hasAlreadyDisagreed() {
     return this.props.timeSlot.disagreeingUsers.includes(this.props.email!!)
   }
+  hasAlreadyAgreeIfNeeded(){
+    return this.props.timeSlot.agreeIfNeededUsers.includes(this.props.email!!)
+  }
 
   render() {
     return <div>
@@ -113,6 +116,19 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
                   :
                   <button className="btn btn-danger"
                           onClick={(() => this.voteForMeeting(VoteOption.DISAGREE))}>مخالف</button>
+              )
+            }
+          </div>
+          <div className="col-auto">
+            <span>{this.props.timeSlot.agreeIfNeededUsers.length}</span><span className="mr-3"> اگر لازم باشد</span>
+            {
+              this.props.email !== undefined && (
+                this.hasAlreadyAgreeIfNeeded() ?
+                  <button className="btn btn-outline-danger"
+                          onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
+                  :
+                  <button className="btn btn-warning"
+                          onClick={(() => this.voteForMeeting(VoteOption.AGREE_IF_NEEDED))}>اگر لازم باشد</button>
               )
             }
           </div>
