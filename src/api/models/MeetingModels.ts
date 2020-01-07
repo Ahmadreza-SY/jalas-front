@@ -17,7 +17,8 @@ export enum MeetingStatus {
   ELECTING = "ELECTING",
   PENDING = "PENDING",
   RESERVED = "RESERVED",
-  CANCELED = "CANCELED"
+  CANCELED = "CANCELED",
+  CLOSED = "CLOSED"
 }
 
 

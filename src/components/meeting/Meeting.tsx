@@ -72,6 +72,16 @@ export default class MeetingComponent extends Component<Props, State> {
     })
   }
 
+  closePoll() {
+    Api.closePoll(this.props.match.params.meetingId).then(response => {
+      const meeting = this.state.meeting;
+      if (meeting) {
+        meeting.status = MeetingStatus.CLOSED;
+        this.setState({...this.state, meeting})
+      }
+    })
+  }
+
   isOwner() {
     return this.props.match.params.email === undefined || this.state.meeting!!.owner === this.props.match.params.email
   }
@@ -197,6 +207,8 @@ export default class MeetingComponent extends Component<Props, State> {
             <div className="col-auto">
               {meeting.status === MeetingStatus.PENDING &&
               <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
+              {meeting.status === MeetingStatus.ELECTING &&
+              <button className="btn btn-danger" onClick={() => this.closePoll()}>بستن نظرسنجی</button>}
             </div>
           </div>
         </div>
@@ -205,7 +217,7 @@ export default class MeetingComponent extends Component<Props, State> {
         <div className="card-header">گزینه ها</div>
         <div className="card-body">
 
-          {meeting.status === MeetingStatus.ELECTING ? (
+          {(meeting.status === MeetingStatus.ELECTING || meeting.status === MeetingStatus.CLOSED) ? (
             <ul className="list-group">
               {meeting.slots.map((slot: MeetingPoll, index: number) => (
                 <li className="list-group-item list-group-item-dark" key={index}>
@@ -217,6 +229,7 @@ export default class MeetingComponent extends Component<Props, State> {
                     getRoomsFailCallback={() => this.clearSelectedTimeSlot()}
                     pageEntryTime={this.state.pageEntryTime}
                     email={this.props.match.params.email}
+                    closed={meeting!!.status === MeetingStatus.CLOSED}
                   />
                   {
                     this.isOwner() && this.state.selectedTimeSlot !== index &&

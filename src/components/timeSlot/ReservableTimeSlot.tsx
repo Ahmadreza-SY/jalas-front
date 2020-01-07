@@ -93,12 +93,12 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
             <span>{this.props.timeSlot.agreeingUsers.length}</span>
             <span className="mr-3">موافق</span>
             {
-              this.props.email != undefined && (
+              this.props.email !== undefined && (
                 this.hasAlreadyAgreed() ?
-                  <button className="btn btn-outline-danger"
+                  <button className="btn btn-outline-danger" disabled={this.props.closed}
                           onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
                   :
-                  <button className="btn btn-success"
+                  <button className="btn btn-success" disabled={this.props.closed}
                           onClick={(() => this.voteForMeeting(VoteOption.AGREE))}>موافق</button>
               )
             }
@@ -108,10 +108,10 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
             {
               this.props.email !== undefined && (
                 this.hasAlreadyDisagreed() ?
-                  <button className="btn btn-outline-danger"
+                  <button className="btn btn-outline-danger" disabled={this.props.closed}
                           onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
                   :
-                  <button className="btn btn-danger"
+                  <button className="btn btn-danger" disabled={this.props.closed}
                           onClick={(() => this.voteForMeeting(VoteOption.DISAGREE))}>مخالف</button>
               )
             }
@@ -131,6 +131,7 @@ interface Props {
   pageEntryTime: Date
   getRoomsFailCallback: () => void
   email: string | undefined
+  closed: boolean
 }
 
 interface State {

@@ -85,6 +85,10 @@ class ApiClass {
     return this.axiosInstance.delete(`/meeting/${meetingId}/reserve`)
   }
 
+  closePoll(meetingId: string) {
+    return this.axiosInstance.patch(`/meeting/${meetingId}/poll/close`)
+  }
+
   createMeeting(title: string, slots: TimeRange[], guests: string[], deadline: number | undefined) {
     return this.axiosInstance.post('/meeting', {
       title, slots, guests, deadline
