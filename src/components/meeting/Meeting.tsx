@@ -21,6 +21,7 @@ export default class MeetingComponent extends Component<Props, State> {
       newSlotStart: 0,
       newSlotEnd: 0,
       user: undefined,
+      guestEmail: "",
       redirectLink: undefined
     };
   }
@@ -104,6 +105,32 @@ export default class MeetingComponent extends Component<Props, State> {
       this.setState({ meeting });
     })
   }
+  
+  updateGuestEmail(e: ChangeEvent<HTMLInputElement>) {
+    if (!e.target.value)
+      return;
+    this.setState({...this.state, guestEmail: e.target.value})
+  }
+
+  private deleteGuest(guest: string) {
+    let meeting = this.state.meeting!!;
+    Api.deleteMeetingGuest(meeting.id, guest)
+      .then(response => {
+        meeting.guests = meeting.guests.filter(item => item !== guest);
+        this.setState({meeting});
+        ToastUtils.success("Guest removed successfully");
+      })
+  }
+
+  private addGuest() {
+    let meeting = this.state.meeting!!;
+    Api.addMeetingGuest(meeting.id, this.state.guestEmail)
+      .then(response => {
+        meeting.guests.push(this.state.guestEmail);
+        this.setState({meeting, guestEmail: ""});
+        ToastUtils.success("Guest invited successfully");
+      })
+  }
 
   render() {
     let meeting = this.state.meeting;
@@ -124,6 +151,33 @@ export default class MeetingComponent extends Component<Props, State> {
           <button className="btn btn-success" onClick={() => this.updateMeeting()}>
             ثبت زمان جدید
           </button>
+        </div>
+      </div>
+    );
+    let additionalGuestForm = (
+      <div className="card text-white bg-dark mt-2">
+        <div className="card-header">مهمان‌ها</div>
+        <div className="card-body">
+          <div className="row mb-3">
+            {this.state.meeting && this.state.meeting.guests.map((guest: string, index: number) => (
+                <div className="col-auto mb-2" key={index}>
+                  <span className="mr-1">{guest}</span>
+                  <button className="btn btn-danger" onClick={() => this.deleteGuest(guest)}>
+                    <i className="fas fa-trash"/>
+                  </button>
+                </div>
+              )
+            )}
+          </div>
+          <div className="row">
+            <div className="col">
+              <input className="form-control" onChange={(e) => this.updateGuestEmail(e)}
+                     type="email" placeholder="ایمیل مهمان" value={this.state.guestEmail} />
+            </div>
+            <div className="col">
+              <button className="btn btn-primary" onClick={() => this.addGuest()}>دعوت از مهمان</button>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -185,6 +239,7 @@ export default class MeetingComponent extends Component<Props, State> {
         </div>
       </div>
       {meeting.status === MeetingStatus.ELECTING ? additionalOptionForm : null}
+      {meeting.status === MeetingStatus.ELECTING ? additionalGuestForm : null}
       <div className="card text-white bg-dark mt-2">
         <div className="card-header"><h4>Comments</h4></div>
         <div className="card-body">
@@ -253,6 +308,7 @@ interface State {
   newSlotStart: number,
   newSlotEnd: number,
   user: User | undefined,
+  guestEmail: string,
   redirectLink: string | undefined
 }
 

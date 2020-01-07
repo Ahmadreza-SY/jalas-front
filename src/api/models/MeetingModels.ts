@@ -6,6 +6,7 @@ export class Meeting {
     public time: TimeRange,
     public roomId: number,
     public slots: MeetingPoll[],
+    public guests: string[],
     public owner: string,
     public comments: CommentModel[]
   ) {
@@ -24,6 +25,7 @@ export class MeetingPoll {
   constructor(
     public agreeingUsers: string[],
     public disagreeingUsers: string[],
+    public agreeIfNeededUsers: string[],
     public time: TimeRange
   ) {
   }
@@ -40,7 +42,8 @@ export class TimeRange {
 export enum VoteOption {
   AGREE = "AGREE",
   DISAGREE = "DISAGREE",
-  REVOKE = "REVOKE"
+  REVOKE = "REVOKE",
+  AGREE_IF_NEEDED = "AGREE_IF_NEEDED"
 }
 
 export class CommentModel {
