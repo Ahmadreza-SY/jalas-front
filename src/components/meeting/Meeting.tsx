@@ -105,7 +105,7 @@ export default class MeetingComponent extends Component<Props, State> {
       this.setState({ meeting });
     })
   }
-  
+
   updateGuestEmail(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.value)
       return;
@@ -162,7 +162,7 @@ export default class MeetingComponent extends Component<Props, State> {
             {this.state.meeting && this.state.meeting.guests.map((guest: string, index: number) => (
                 <div className="col-auto mb-2" key={index}>
                   <span className="mr-1">{guest}</span>
-                  <button className="btn btn-danger" onClick={() => this.deleteGuest(guest)}>
+                  <button className="btn btn-outline-danger btn-sm" onClick={() => this.deleteGuest(guest)}>
                     <i className="fas fa-trash"/>
                   </button>
                 </div>
@@ -226,7 +226,7 @@ export default class MeetingComponent extends Component<Props, State> {
                   }
                   {
                     this.props.match.params.email != undefined && (
-                      <button onClick={() => { this.deleteMeetingSlot(slot.time) }} className="btn btn-danger"><i className="fas fa-trash" /></button>
+                      <button onClick={() => { this.deleteMeetingSlot(slot.time) }} className="btn btn-outline-danger btn-sm float-right"><i className="fas fa-trash" /></button>
                     )
                   }
                 </li>
