@@ -1,6 +1,13 @@
 import React, {ChangeEvent, Component, FormEvent} from 'react';
 import Api from '../../api/Api';
-import {CommentModel, Meeting, MeetingPoll, MeetingStatus, TimeRange} from '../../api/models/MeetingModels';
+import {
+  CommentModel,
+  Meeting,
+  MeetingPoll,
+  MeetingStatus,
+  StateClassMap,
+  TimeRange
+} from '../../api/models/MeetingModels';
 import ReservableTimeSlotComponent from '../timeSlot/ReservableTimeSlot';
 import ReservedTimeSlot from '../timeSlot/ReservedTimeSlot';
 import {RouteComponentProps} from 'react-router';
@@ -60,6 +67,16 @@ export default class MeetingComponent extends Component<Props, State> {
       const meeting = this.state.meeting;
       if (meeting) {
         meeting.status = MeetingStatus.CANCELED;
+        this.setState({...this.state, meeting})
+      }
+    })
+  }
+
+  closePoll() {
+    Api.closePoll(this.props.match.params.meetingId).then(response => {
+      const meeting = this.state.meeting;
+      if (meeting) {
+        meeting.status = MeetingStatus.CLOSED;
         this.setState({...this.state, meeting})
       }
     })
@@ -165,7 +182,7 @@ export default class MeetingComponent extends Component<Props, State> {
           <div className="row">
             <div className="col">
               <input className="form-control" onChange={(e) => this.updateGuestEmail(e)}
-                     type="email" placeholder="ایمیل مهمان" value={this.state.guestEmail} />
+                     type="email" placeholder="ایمیل مهمان" value={this.state.guestEmail}/>
             </div>
             <div className="col">
               <button className="btn btn-primary" onClick={() => this.addGuest()}>دعوت از مهمان</button>
@@ -185,11 +202,13 @@ export default class MeetingComponent extends Component<Props, State> {
             <div className="col">
               <h1 className="mb-0">
                 {meeting.title}
-                <span className="badge badge-dark ml-2">{meeting.status}</span>
+                <span className={`badge badge-${StateClassMap[meeting.status]} ml-3`}>{meeting.status}</span>
               </h1></div>
             <div className="col-auto">
               {meeting.status === MeetingStatus.PENDING &&
               <button className="btn btn-danger" onClick={() => this.cancelReservation()}>لغو</button>}
+              {meeting.status === MeetingStatus.ELECTING &&
+              <button className="btn btn-danger" onClick={() => this.closePoll()}>بستن نظرسنجی</button>}
             </div>
           </div>
         </div>
@@ -198,7 +217,7 @@ export default class MeetingComponent extends Component<Props, State> {
         <div className="card-header">گزینه ها</div>
         <div className="card-body">
 
-          {meeting.status === MeetingStatus.ELECTING ? (
+          {(meeting.status === MeetingStatus.ELECTING || meeting.status === MeetingStatus.CLOSED) ? (
             <ul className="list-group">
               {meeting.slots.map((slot: MeetingPoll, index: number) => (
                 <li className="list-group-item list-group-item-dark" key={index}>
@@ -210,6 +229,7 @@ export default class MeetingComponent extends Component<Props, State> {
                     getRoomsFailCallback={() => this.clearSelectedTimeSlot()}
                     pageEntryTime={this.state.pageEntryTime}
                     email={this.props.match.params.email}
+                    closed={meeting!!.status === MeetingStatus.CLOSED}
                   />
                   {
                     this.isOwner() && this.state.selectedTimeSlot !== index &&
@@ -220,9 +240,12 @@ export default class MeetingComponent extends Component<Props, State> {
                 </li>
               ))}
             </ul>
-          ) : (
-            <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
-          )}
+          ) : [
+            (meeting.status === MeetingStatus.PENDING || meeting.status === MeetingStatus.RESERVED) ?
+              <ReservedTimeSlot time={meeting.time} roomId={meeting.roomId}/>
+              :
+              <p>No option available</p>
+          ]}
 
         </div>
       </div>
