@@ -1,5 +1,5 @@
-import React, { ChangeEvent, Component } from 'react';
-import { MeetingPoll, VoteOption } from '../../api/models/MeetingModels';
+import React, {ChangeEvent, Component} from 'react';
+import {MeetingPoll, VoteOption} from '../../api/models/MeetingModels';
 import Api from '../../api/Api';
 import ToastUtils from '../../utils/ToastUtils';
 import TimeSlotGeneralInfo from './TimeSlotGeneralInfo';
@@ -7,14 +7,14 @@ import TimeSlotGeneralInfo from './TimeSlotGeneralInfo';
 export default class ReservableTimeSlotComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { availableRooms: [], selectedRoom: undefined, fetchError: false }
+    this.state = {availableRooms: [], selectedRoom: undefined, fetchError: false}
   }
 
   componentWillReceiveProps(nextProps: Readonly<Props>): void {
     if (nextProps.selected)
       this.getAvailableRooms();
     else {
-      this.setState({ availableRooms: [], selectedRoom: undefined })
+      this.setState({availableRooms: [], selectedRoom: undefined})
     }
   }
 
@@ -22,17 +22,17 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
     Api
       .getAvailableRooms(this.props.timeSlot.time.start, this.props.timeSlot.time.end)
       .then(response => {
-        this.setState({ ...this.state, availableRooms: response.data.availableRooms })
+        this.setState({...this.state, availableRooms: response.data.availableRooms})
       })
       .catch(error => {
         ToastUtils.error("Error in getting rooms. Please try again");
-        this.setState({ ...this.state, fetchError: true });
+        this.setState({...this.state, fetchError: true});
         this.props.getRoomsFailCallback()
       })
   }
 
   selectRoom(event: ChangeEvent<HTMLSelectElement>) {
-    this.setState({ ...this.state, selectedRoom: parseInt(event.target.value) })
+    this.setState({...this.state, selectedRoom: parseInt(event.target.value)})
   }
 
   showReserveOptions() {
@@ -90,19 +90,19 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
   render() {
     return <div>
       <div>
-        <TimeSlotGeneralInfo time={this.props.timeSlot.time} />
+        <TimeSlotGeneralInfo time={this.props.timeSlot.time}/>
         <div className="row justify-content-center mt-2">
           <div className="col-auto">
             <span>{this.props.timeSlot.agreeingUsers.length}</span>
             <span className="mr-3">موافق</span>
             {
-              this.props.email != undefined && (
+              this.props.email !== undefined && (
                 this.hasAlreadyAgreed() ?
-                  <button className="btn btn-outline-danger"
-                    onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
+                  <button className="btn btn-outline-danger" disabled={this.props.closed}
+                          onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
                   :
-                  <button className="btn btn-success"
-                    onClick={(() => this.voteForMeeting(VoteOption.AGREE))}>موافق</button>
+                  <button className="btn btn-success" disabled={this.props.closed}
+                          onClick={(() => this.voteForMeeting(VoteOption.AGREE))}>موافق</button>
               )
             }
           </div>
@@ -111,11 +111,11 @@ export default class ReservableTimeSlotComponent extends Component<Props, State>
             {
               this.props.email !== undefined && (
                 this.hasAlreadyDisagreed() ?
-                  <button className="btn btn-outline-danger"
-                    onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
+                  <button className="btn btn-outline-danger" disabled={this.props.closed}
+                          onClick={(() => this.voteForMeeting(VoteOption.REVOKE))}>بازپس‌گیری</button>
                   :
-                  <button className="btn btn-danger"
-                    onClick={(() => this.voteForMeeting(VoteOption.DISAGREE))}>مخالف</button>
+                  <button className="btn btn-danger" disabled={this.props.closed}
+                          onClick={(() => this.voteForMeeting(VoteOption.DISAGREE))}>مخالف</button>
               )
             }
           </div>
@@ -147,6 +147,7 @@ interface Props {
   pageEntryTime: Date
   getRoomsFailCallback: () => void
   email: string | undefined
+  closed: boolean
 }
 
 interface State {

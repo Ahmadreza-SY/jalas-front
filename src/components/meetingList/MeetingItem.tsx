@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import {User} from "../../api/models/UserModels";
-import {MeetingStatus} from "../../api/models/MeetingModels";
+import {MeetingStatus, StateClassMap} from "../../api/models/MeetingModels";
 
 export default class MeetingItem extends Component<Props, State> {
   constructor(props: Props) {
@@ -23,7 +23,7 @@ export default class MeetingItem extends Component<Props, State> {
 					<span className="">
 						{this.props.title}
 					</span>
-            <span className="badge badge-dark ml-3">
+            <span className={`badge badge-${StateClassMap[this.props.state]} ml-3`}>
 						{this.props.state}
 					</span>
           </div>
