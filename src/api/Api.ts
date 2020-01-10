@@ -1,9 +1,9 @@
-import axios, { AxiosPromise } from 'axios';
-import { CommentModel, Meeting, TimeRange, VoteOption } from './models/MeetingModels';
+import axios, {AxiosPromise} from 'axios';
+import {CommentModel, Meeting, TimeRange, VoteOption} from './models/MeetingModels';
 import AvailableRoomsResponse from './models/AvailableRoomsResponse';
-import { LoginResponse, User } from "./models/UserModels";
+import {LoginResponse, NotificationType, User} from "./models/UserModels";
 import ToastUtils from "../utils/ToastUtils";
-import { GeneralReport } from "./models/StatModels";
+import {GeneralReport} from "./models/StatModels";
 
 class ApiClass {
   private axiosInstance = axios.create({
@@ -12,11 +12,11 @@ class ApiClass {
 
   constructor() {
     this.axiosInstance.interceptors.request.use(config => {
-      if (config.url && (config.url.includes("/login")))
-        return config;
-      config.headers["Authorization"] = localStorage.getItem("token");
-      return config
-    },
+        if (config.url && (config.url.includes("/login")))
+          return config;
+        config.headers["Authorization"] = localStorage.getItem("token");
+        return config
+      },
       error => Promise.reject(error)
     );
 
@@ -46,11 +46,11 @@ class ApiClass {
   }
 
   updateMeetingSlots(id: string, newSlot: TimeRange) {
-    return this.axiosInstance.put(`/meeting/${id}/slot`, { newSlots: [newSlot] })
+    return this.axiosInstance.put(`/meeting/${id}/slot`, {newSlots: [newSlot]})
   }
 
   deleteMeetingSlot(id: string, slot: TimeRange) {
-    return this.axiosInstance.delete(`/meeting/${id}/slot`, { data: { slot } })
+    return this.axiosInstance.delete(`/meeting/${id}/slot`, {data: {slot}})
   }
 
   addMeetingGuest(id: string, guestEmail: string) {
@@ -106,7 +106,7 @@ class ApiClass {
   }
 
   addCommentForMeeting(meetingId: string, content: string): AxiosPromise<CommentModel> {
-    return this.axiosInstance.post(`/meeting/${meetingId}/comment`, { content })
+    return this.axiosInstance.post(`/meeting/${meetingId}/comment`, {content})
   }
 
   updateCommentForMeeting(meetingId: string, comment: CommentModel): AxiosPromise<CommentModel> {
@@ -114,7 +114,7 @@ class ApiClass {
   }
 
   login(username: string, password: string): AxiosPromise<LoginResponse> {
-    return this.axiosInstance.post(`/auth/login`, { username, password })
+    return this.axiosInstance.post(`/auth/login`, {username, password})
   }
 
   profile(): AxiosPromise<User> {
@@ -127,6 +127,10 @@ class ApiClass {
 
   deleteComment(commentId: string) {
     return this.axiosInstance.delete(`/meeting/comment/${commentId}`)
+  }
+
+  updateNotificationTypes(types: NotificationType[]) {
+    return this.axiosInstance.patch(`/auth/profile/notification`, {types})
   }
 }
 
