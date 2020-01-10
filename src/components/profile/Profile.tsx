@@ -37,7 +37,7 @@ export default class Profile extends Component<Props, State> {
   renderType(type: NotificationType) {
     return <li className="list-group-item list-group-item-dark">
       {type}
-      <input type="checkbox" className="form-check-input"
+      <input type="checkbox" className="form-check-input marginal-check-input"
              defaultChecked={this.state.notificationTypes[type]}
              onChange={e => {
                let notificationTypes = this.state.notificationTypes;
