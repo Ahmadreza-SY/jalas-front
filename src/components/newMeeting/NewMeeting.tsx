@@ -70,8 +70,6 @@ export default class NewMeeting extends Component<Props, State> {
   }
 
   updateEmail(e: ChangeEvent<HTMLInputElement>) {
-    if (!e.target.value)
-      return;
     this.setState({...this.state, email: e.target.value})
   }
 

@@ -45,8 +45,12 @@ class ApiClass {
     return this.axiosInstance.get<Meeting>(`/meeting/${id}`);
   }
 
-  updateMeeting(id: string, newSlot: TimeRange) {
-    return this.axiosInstance.put(`/meeting/${id}`, {newSlots: [newSlot]})
+  updateMeetingSlots(id: string, newSlot: TimeRange) {
+    return this.axiosInstance.put(`/meeting/${id}/slot`, {newSlots: [newSlot]})
+  }
+
+  deleteMeetingSlot(id: string, slot: TimeRange) {
+    return this.axiosInstance.delete(`/meeting/${id}/slot`, {data: {slot}})
   }
 
   addMeetingGuest(id: string, guestEmail: string) {
