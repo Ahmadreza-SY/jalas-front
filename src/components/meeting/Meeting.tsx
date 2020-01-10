@@ -54,8 +54,7 @@ export default class MeetingComponent extends Component<Props, State> {
       const user = this.getUser()
       if (!(meeting.guests.includes(user.email)) && (this.getUser().email !== meeting.owner)) {
         this.setState({redirectLink: "/meeting"});
-      }
-      else
+      } else
         this.setState({...this.state, meeting: response.data});
     })
   }
@@ -95,10 +94,6 @@ export default class MeetingComponent extends Component<Props, State> {
 
   getUser(): User {
     return JSON.parse(localStorage.getItem("user")!!);
-  }
-
-  isParticipant() {
-    return this.getUser().email in this.state.meeting!!.guests
   }
 
   updateStart(e: ChangeEvent<HTMLInputElement>) {
@@ -276,8 +271,8 @@ export default class MeetingComponent extends Component<Props, State> {
 
         </div>
       </div>
-      {meeting.status === MeetingStatus.ELECTING ? additionalOptionForm : null}
-      {meeting.status === MeetingStatus.ELECTING ? additionalGuestForm : null}
+      {meeting.status === MeetingStatus.ELECTING && this.isOwner() ? additionalOptionForm : null}
+      {meeting.status === MeetingStatus.ELECTING && this.isOwner() ? additionalGuestForm : null}
       <div className="card text-white bg-dark mt-2">
         <div className="card-header"><h4>Comments</h4></div>
         <div className="card-body">
