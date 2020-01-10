@@ -50,7 +50,13 @@ export default class MeetingComponent extends Component<Props, State> {
 
   getMeeting() {
     Api.getMeeting(this.props.match.params.meetingId).then(response => {
-      this.setState({...this.state, meeting: response.data});
+      const meeting = response.data;
+      const user = this.getUser()
+      if (!(meeting.guests.includes(user.email)) && (this.getUser().email !== meeting.owner)) {
+        this.setState({redirectLink: "/meeting"});
+      }
+      else
+        this.setState({...this.state, meeting: response.data});
     })
   }
 
@@ -83,7 +89,16 @@ export default class MeetingComponent extends Component<Props, State> {
   }
 
   isOwner() {
-    return this.props.match.params.email === undefined || this.state.meeting!!.owner === this.props.match.params.email
+    const user = this.getUser();
+    return this.state.meeting!!.owner === user.email
+  }
+
+  getUser(): User {
+    return JSON.parse(localStorage.getItem("user")!!);
+  }
+
+  isParticipant() {
+    return this.getUser().email in this.state.meeting!!.guests
   }
 
   updateStart(e: ChangeEvent<HTMLInputElement>) {
@@ -119,7 +134,7 @@ export default class MeetingComponent extends Component<Props, State> {
   deleteMeetingSlot(slot: TimeRange) {
     Api.deleteMeetingSlot(this.props.match.params.meetingId, slot).then(response => {
       let meeting = response.data;
-      this.setState({ meeting });
+      this.setState({meeting});
     })
   }
 
@@ -244,7 +259,9 @@ export default class MeetingComponent extends Component<Props, State> {
                   }
                   {
                     this.props.match.params.email !== undefined && (
-                      <button onClick={() => { this.deleteMeetingSlot(slot.time) }} className="btn btn-outline-danger btn-sm float-right"><i className="fas fa-trash" /></button>
+                      <button onClick={() => {
+                        this.deleteMeetingSlot(slot.time)
+                      }} className="btn btn-outline-danger btn-sm float-right"><i className="fas fa-trash"/></button>
                     )
                   }
                 </li>
@@ -278,6 +295,7 @@ export default class MeetingComponent extends Component<Props, State> {
               <CommentItem key={index} parentComment={comment} comment={comment}
                            updateCallback={(cm) => this.commentUpdate(cm)}
                            deleteCallback={() => this.deleteComment(comment)}
+                           isMeetingOwner={this.isOwner()}
               />
             ))}
           </div>

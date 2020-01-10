@@ -115,9 +115,9 @@ export default class CommentItem extends Component<Props, State> {
           <span className="col-auto text-muted">{TimeUtils.getFromNowDuration(comment.creationDate)}</span>
           <button onClick={() => this.toggleShowReplyBox()} className="btn btn-info"><i className="fas fa-reply"/>
           </button>
-          {this.props.comment.owner === this.getUser().email &&
+          {(this.props.comment.owner === this.getUser().email) &&
           <button onClick={() => this.editComment()} className="btn btn-info"><i className="fas fa-edit"/></button>}
-          {this.props.comment.owner === this.getUser().email &&
+          {(this.props.isMeetingOwner || this.props.comment.owner === this.getUser().email) &&
           <button onClick={() => this.deleteComment()} className="btn btn-danger"><i className="fas fa-trash"/>
           </button>}
         </div>
@@ -131,6 +131,7 @@ export default class CommentItem extends Component<Props, State> {
           <CommentItem updateCallback={this.props.updateCallback} key={reply.id}
                        parentComment={this.props.parentComment} comment={reply}
                        deleteCallback={null}
+                       isMeetingOwner={this.props.isMeetingOwner}
           />
         )}
       </div>
@@ -149,4 +150,5 @@ interface Props {
   comment: CommentModel,
   updateCallback: (cm: CommentModel) => void
   deleteCallback: (() => void) | null
+  isMeetingOwner: boolean
 }
