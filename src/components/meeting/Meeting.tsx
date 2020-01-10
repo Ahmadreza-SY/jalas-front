@@ -105,7 +105,7 @@ export default class MeetingComponent extends Component<Props, State> {
       ToastUtils.error("No slot entered!");
       return
     }
-    Api.updateMeeting(
+    Api.updateMeetingSlots(
       this.props.match.params.meetingId,
       new TimeRange(this.state.newSlotStart, this.state.newSlotEnd)
     )
@@ -116,9 +116,14 @@ export default class MeetingComponent extends Component<Props, State> {
       })
   }
 
+  deleteMeetingSlot(slot: TimeRange) {
+    Api.deleteMeetingSlot(this.props.match.params.meetingId, slot).then(response => {
+      let meeting = response.data;
+      this.setState({ meeting });
+    })
+  }
+
   updateGuestEmail(e: ChangeEvent<HTMLInputElement>) {
-    if (!e.target.value)
-      return;
     this.setState({...this.state, guestEmail: e.target.value})
   }
 
@@ -172,7 +177,7 @@ export default class MeetingComponent extends Component<Props, State> {
             {this.state.meeting && this.state.meeting.guests.map((guest: string, index: number) => (
                 <div className="col-auto mb-2" key={index}>
                   <span className="mr-1">{guest}</span>
-                  <button className="btn btn-danger" onClick={() => this.deleteGuest(guest)}>
+                  <button className="btn btn-outline-danger btn-sm" onClick={() => this.deleteGuest(guest)}>
                     <i className="fas fa-trash"/>
                   </button>
                 </div>
@@ -236,6 +241,11 @@ export default class MeetingComponent extends Component<Props, State> {
                     <div className="mt-2">
                         <button className="btn btn-primary" onClick={() => this.selectTimeSlot(index)}>انتخاب</button>
                     </div>
+                  }
+                  {
+                    this.props.match.params.email !== undefined && (
+                      <button onClick={() => { this.deleteMeetingSlot(slot.time) }} className="btn btn-outline-danger btn-sm float-right"><i className="fas fa-trash" /></button>
+                    )
                   }
                 </li>
               ))}
