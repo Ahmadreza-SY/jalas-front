@@ -7,6 +7,7 @@ import NewMeeting from './components/newMeeting/NewMeeting';
 import Login from "./components/login/Login";
 import Report from "./components/admin/Report";
 import Nav from './components/common/Nav';
+import Profile from "./components/profile/Profile";
 
 export default class App extends Component<Props, State> {
   render() {
@@ -26,6 +27,7 @@ export default class App extends Component<Props, State> {
                   <Route exact path="/meeting/:meetingId" component={MeetingComponent}/>
                   <Route exact path="/meeting/:meetingId/vote/:email" component={MeetingComponent}/>
                   <Route exact path="/report" component={Report}/>
+                  <Route exact path="/profile" component={Profile}/>
                 </Switch>
               </div>
             </div>

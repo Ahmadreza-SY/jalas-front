@@ -1,7 +1,7 @@
 import axios, {AxiosPromise} from 'axios';
 import {CommentModel, Meeting, TimeRange, VoteOption} from './models/MeetingModels';
 import AvailableRoomsResponse from './models/AvailableRoomsResponse';
-import {LoginResponse, User} from "./models/UserModels";
+import {LoginResponse, NotificationType, User} from "./models/UserModels";
 import ToastUtils from "../utils/ToastUtils";
 import {GeneralReport} from "./models/StatModels";
 
@@ -123,6 +123,10 @@ class ApiClass {
 
   deleteComment(commentId: string) {
     return this.axiosInstance.delete(`/meeting/comment/${commentId}`)
+  }
+
+  updateNotificationTypes(types: NotificationType[]) {
+    return this.axiosInstance.patch(`/auth/profile/notification`, {types})
   }
 }
 

@@ -48,6 +48,10 @@ class Nav extends Component<Props, State> {
             <Link className="nav-link" to="/meeting/new" aria-controls="v-pills-profile" aria-selected="false">
                 New Meeting
             </Link>}
+            {!user.isAdmin &&
+            <Link className="nav-link" to="/profile" aria-controls="v-pills-profile" aria-selected="false">
+                Notification Management
+            </Link>}
             {user.isAdmin &&
             <Link className="nav-link" to="/report" aria-controls="v-pills-messages" aria-selected="false">
                 Report
