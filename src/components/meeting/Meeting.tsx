@@ -88,7 +88,7 @@ export default class MeetingComponent extends Component<Props, State> {
       ToastUtils.error("No slot entered!");
       return
     }
-    Api.updateMeeting(
+    Api.updateMeetingSlots(
       this.props.match.params.meetingId,
       new TimeRange(this.state.newSlotStart, this.state.newSlotEnd)
     )
