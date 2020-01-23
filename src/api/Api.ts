@@ -7,7 +7,7 @@ import {GeneralReport} from "./models/StatModels";
 
 class ApiClass {
   private axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080'
+    baseURL: 'http://194.5.193.107:41801'
   });
 
   constructor() {
@@ -114,6 +114,7 @@ class ApiClass {
   }
 
   login(username: string, password: string): AxiosPromise<LoginResponse> {
+    console.log(process.env.API_URL, "SKDJLAFJDLKJF")
     return this.axiosInstance.post(`/auth/login`, {username, password})
   }
 
